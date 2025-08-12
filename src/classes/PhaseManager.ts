@@ -1,4 +1,4 @@
-import { ModuleSettings, SettingKey } from "@/settings";
+import { ModuleSettings, SettingKey, moduleId } from "@/settings";
 
 const WHITELIST_DOCS = [
   "AmbientLight",
@@ -101,7 +101,7 @@ async function replaceEmbedded(master: Scene, source: Scene, docName: Whiteliste
   const toDeleteIds: string[] = [];
   for (const d of collection) {
     const doc = d as foundry.abstract.Document;
-    const persist = getProperty(doc, `flags.${MODULE_ID}.persist`);
+    const persist = getProperty(doc, `flags.${moduleId}.persist`);
     if (!persist) toDeleteIds.push(doc.id!);
   }
 
@@ -113,7 +113,7 @@ async function replaceEmbedded(master: Scene, source: Scene, docName: Whiteliste
     return raw;
   });
 
-  // Special handling for walls to minimize vision flicker: create first then delete
+  // Special handling for walls to minimize token vision flicker: create first then delete
   if (docName === "Wall") {
     if (toCreate.length) await master.createEmbeddedDocuments(docName, toCreate);
     if (toDeleteIds.length) await master.deleteEmbeddedDocuments(docName, toDeleteIds);

@@ -1,0 +1,52 @@
+<form class="easy-phasey-config">
+  <section class="config-row">
+    <label for="folderId">Phase Folder</label>
+    <select name="folderId" data-action="chooseFolder">
+      <option value="">-- All Scenes --</option>
+      {{#each folders}}
+        <option value="{{this.id}}" {{#if (eq ../selectedFolderId this.id)}}selected{{/if}}>{{this.name}}</option>
+      {{/each}}
+    </select>
+  </section>
+
+  <section class="config-row">
+    <label for="masterSceneId">Master Scene</label>
+    <select name="masterSceneId">
+      <option value="">-- None (auto-create) --</option>
+      {{#each allScenesInFolder}}
+        <option value="{{this.id}}" {{#if (eq ../masterSceneId this.id)}}selected{{/if}}>{{this.name}}</option>
+      {{/each}}
+    </select>
+  </section>
+
+  <section class="config-row">
+    <div class="list-header">
+      <h3>Phase Scenes (in order)</h3>
+      <div class="list-actions">
+        <select name="addScene">
+          {{#each allScenesInFolder}}
+            <option value="{{this.id}}">{{this.name}}</option>
+          {{/each}}
+        </select>
+        <button type="button" data-action="add"><i class="fas fa-plus"></i> Add</button>
+      </div>
+    </div>
+
+    <ol class="phase-list">
+      {{#each phaseScenes}}
+        <li class="phase-item" data-scene-id="{{this.id}}">
+          <span class="name">{{this.name}}</span>
+          <div class="item-actions">
+            <button type="button" data-action="up" title="Move Up"><i class="fas fa-arrow-up"></i></button>
+            <button type="button" data-action="down" title="Move Down"><i class="fas fa-arrow-down"></i></button>
+            <button type="button" data-action="remove" title="Remove"><i class="fas fa-trash"></i></button>
+          </div>
+        </li>
+      {{/each}}
+    </ol>
+  </section>
+
+  <footer class="config-footer">
+    <button type="button" data-action="save" class="save"><i class="fas fa-save"></i> Save</button>
+  </footer>
+</form>

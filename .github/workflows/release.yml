@@ -1,0 +1,99 @@
+# updates the release by building the code and creating module.json and module.zip; then adds the release to FoundryVTT
+name: Update Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up Node.js
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # update version and download link in module.json
+      - name: Read version from package.json
+        id: read_version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "$GITHUB_ENV"
+
+      - name: Update module.json version and download link
+        id: update_module_version
+        uses: cschleiden/replace-tokens@v1
+        with:
+          files: './static/module.json'
+        env:
+          DOWNLOAD: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip
+          VERSION: ${{ env.version }}
+
+      # install dependencies and build
+      - run: npm ci
+      - run: npm run build
+
+      # save the output folder for release job
+      - name: Archive dist folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: module-download
+          path: dist/
+      - name: Archive module json
+        uses: actions/upload-artifact@v4
+        with:
+          name: module
+          path: ./static/module.json 
+
+  # Create a release with the module.json and the module.zip file
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download module download file
+        uses: actions/download-artifact@v4
+        with:
+          name: module-download
+          path: module-download
+      
+      - name: Download module.json
+        uses: actions/download-artifact@v4
+        with:
+          name: module
+      
+      # Create a zip file with all files required by the module to add to the release
+      - run: (cd module-download; zip -r ../module.zip .)
+
+      # update the release with the new files
+      - name: Update Release with Files
+        id: create_version_release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true # Set this to false if you want to prevent updating existing releases
+          name: ${{ github.event.release.name }}
+          draft: false
+          prerelease: false
+          token: ${{ secrets.RELEASE_TOKEN }}  # needs access to repo scope in classic tokens
+          artifacts: './module.json, ./module.zip'
+          tag: ${{ github.event.release.tag_name }}
+          body: ${{ github.event.release.body }}
+  
+  deploy:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      # Publish the release to FoundryVTT's package repository.
+      - name: Publish Module to FoundryVTT Website
+        uses: Varriount/fvtt-autopublish@latest
+        with:
+          username: ${{ secrets.FOUNDRY_ADMIN_USERNAME }}
+          password: ${{ secrets.FOUNDRY_ADMIN_PASSWORD }}
+          module-id: easy-phasey
+          manifest-url: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.json
+          manifest-file: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip

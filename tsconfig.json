@@ -1,0 +1,42 @@
+{
+	"compilerOptions": {
+		"incremental": true,
+		"outDir": ".tscout",
+		"target": "es2022",
+		"module": "esnext",
+		"lib": [ "es2022", "dom" ],
+		"typeRoots": [ "./src/types", "node"],
+		"moduleResolution": "bundler",
+		"sourceMap": true,
+		"strict": true,
+
+		"noImplicitAny": false,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"strictBindCallApply": true,
+		"strictPropertyInitialization": false,
+		"noImplicitThis": false,
+		"alwaysStrict": true,
+
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		"forceConsistentCasingInFileNames": true,
+		"esModuleInterop": true,
+
+		"newLine": "lf",
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+
+		"baseUrl": "./",
+		"paths": {
+			"src/*": ["./src/*"],
+			"@/*": ["./src/*"],
+			"@module": ["./static/module.json"]
+		}
+	},
+	"include": ["src/**/*.ts", "src/**/*.d.ts", ], 
+	"exclude": [ "node_modules", "dist", "test/**" ]
+}

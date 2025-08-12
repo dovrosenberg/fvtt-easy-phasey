@@ -1,15 +1,15 @@
-import { ModuleSettings, SettingKey } from '@/settings';
+import { moduleId, ModuleSettings, SettingKey } from '@/settings';
 import type { PhaseConfig } from '@/types';
 
-export class PhaseConfigApp extends foundry.applications.api.ApplicationV2 {
+export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2)  {
   static DEFAULT_OPTIONS: any = {
-    id: 'easy-phasey-config',
+    id: 'fep-config',
     title: 'Easy Phasey Configuration',
     width: 500,
     height: 'auto',
     resizable: true,
     position: { left: 100, top: 100 },
-    classes: ['easy-phasey', 'config'],
+    classes: ['fep'],
     window: { title: 'Easy Phasey' },
     actions: {
       save: (event, app) => (app as PhaseConfigApp).onSave(event),
@@ -45,7 +45,10 @@ export class PhaseConfigApp extends foundry.applications.api.ApplicationV2 {
 
   static PARTS = {
     form: {
-      template: 'templates/phase-config.hbs',
+      template: `modules/${moduleId}/templates/phase-config.hbs`,
+      id: '',
+      classes: [],
+      scrollable: [],
     },
   } as const;
 

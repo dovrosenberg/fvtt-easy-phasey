@@ -1,6 +1,6 @@
 import { moduleId } from '@/settings';
 import { PhaseManager } from '@/classes';
-import { PhaseConfigApp } from '@/ui/PhaseConfigApp';
+import { PhaseConfigApp } from '@/applications/PhaseConfigApp';
 
 const CONTROL_NAME = 'easy-phasey';
 

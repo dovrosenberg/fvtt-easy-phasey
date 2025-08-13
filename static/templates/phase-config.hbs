@@ -25,20 +25,13 @@
       <div class="flexcol">
         <div class="list-header flexrow">
           <h4>Phase Scenes</h4>
-          {{!-- <div class="list-actions">
-            <select name="addScene">
-              {{#each allScenesInFolder}}
-                <option value="{{this.id}}">{{this.name}}</option>
-              {{/each}}
-            </select>
-            <button type="button" data-action="add"><i class="fas fa-plus"></i> Add</button> --}}
         </div>
 
         <div class="list-actions flexrow">
           <div class="flexcol" style="display: flex; flex: 0 1 20px">
             <button type="button" data-action="up" title="Move Up" {{#if disableUp}}disabled{{/if}}><i class="fas fa-arrow-up"></i></button>
             <button type="button" data-action="down" title="Move Down" {{#if disableDown}}disabled{{/if}}><i class="fas fa-arrow-down"></i></button>
-            <button type="button" data-action="remove" title="Remove"><i class="fas fa-trash"></i></button>
+            <button type="button" data-action="toggle-skip" title="Skip"><i class="fas fa-trash"></i></button>
           </div>
           <div class="flexcol" style="flex: 0 0 20px"></div>
           <div class="list-content flexcol">

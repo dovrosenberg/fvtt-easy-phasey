@@ -52,8 +52,6 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     },
     actions: {
       save: PhaseConfigApp.onSave,
-      // add: (event, app) => (app as PhaseConfigApp).onAdd(event),
-      // remove: (event, app) => (app as PhaseConfigApp).onRemove(event),
     },
   };
 
@@ -110,6 +108,11 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     if (downButton) {
       downButton.addEventListener('click', (event: MouseEvent) => { event.preventDefault(); this.onMove(1); });
     }
+
+    const skipButton = this.element?.querySelector('button[data-action="toggle-skip"]') as HTMLButtonElement | null;
+    if (skipButton) {
+      skipButton.addEventListener('click', (event: MouseEvent) => { event.preventDefault(); this.onToggleSkip(); });
+    }
   }
 
   private static async onSave(event: Event) {
@@ -133,24 +136,18 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     // (this as any).close();
   }
 
-  // private onAdd(event: Event) {
-  //   event.preventDefault();
-  //   const select = (this as any).element?.querySelector('select[name="addScene"]') as HTMLSelectElement | null;
-  //   if (!select) return;
-  //   const sceneId = select.value;
-  //   if (!sceneId || this.#config.phaseSceneIds.includes(sceneId)) return;
-  //   this.#config.phaseSceneIds.push(sceneId);
-  //   (this as any).render(true);
-  // }
+  private onToggleSkip() {
+    if (!this.#selectedSceneId) 
+      return;
 
-  // private onRemove(event: Event) {
-  //   event.preventDefault();
-  //   const btn = event.currentTarget as HTMLElement;
-  //   const id = btn?.closest('[data-scene-id]')?.getAttribute('data-scene-id');
-  //   if (!id) return;
-  //   this.#config.phaseSceneIds = this.#config.phaseSceneIds.filter((x) => x !== id);
-  //   (this as any).render(true);
-  // }
+    if (this.#skippedSceneIds.includes(this.#selectedSceneId)) {
+      this.#skippedSceneIds = this.#skippedSceneIds.filter((x) => x !== this.#selectedSceneId);
+    } else {
+      this.#skippedSceneIds.push(this.#selectedSceneId);
+    }
+
+    this.render(true);
+  }
 
   private onMove(delta: number) {
     if (!this.#selectedFolder || !this.#selectedSceneId) 

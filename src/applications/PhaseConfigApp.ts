@@ -16,6 +16,7 @@ type PhaseConfigRenderContext = {
   toggleSkipTitle: string;     // tooltip for the toggle button
   disableToggleSkip: boolean;  // whether the toggle button is disabled
   toggleSkipActive: boolean;   // whether the toggle button should appear active
+  mergeTokens: boolean;   // should the merge box be checked
 }
 
 export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2<PhaseConfigRenderContext>)  {
@@ -23,6 +24,7 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
   #selectedSceneId: string | null = null;
   #sceneIds: string[] = [];
   #skippedSceneIds: string[] = [];
+  #mergeTokens: boolean = true;
 
   static PARTS = {
     'fep-main': {
@@ -81,6 +83,7 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
       toggleSkipTitle: isSelectedSkipped ? 'Unskip' : 'Skip',
       disableToggleSkip: !selectedId,
       toggleSkipActive: isSelectedSkipped,
+      mergeTokens: this.#mergeTokens,
     };
   }
 
@@ -129,6 +132,7 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
 
     this.#selectedFolder.phaseSceneIds = this.#sceneIds;
     this.#selectedFolder.skippedSceneIds = this.#skippedSceneIds;
+    this.#selectedFolder.mergeTokens = this.#mergeTokens;
     await this.#selectedFolder.save();
 
     ui.notifications?.info('Easy Phasey: Configuration saved.');
@@ -192,9 +196,11 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
         // get our working copies
         this.#sceneIds = [...(this.#selectedFolder.phaseSceneIds || [])];
         this.#skippedSceneIds = [...(this.#selectedFolder.skippedSceneIds || [])];
+        this.#mergeTokens = this.#selectedFolder.mergeTokens;
       } else {
         this.#sceneIds = [];
         this.#skippedSceneIds = [];
+        this.#mergeTokens = false;
       }
     }
 

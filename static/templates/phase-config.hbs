@@ -31,9 +31,9 @@
 
         <div class="list-actions flexrow">
           <div class="flexcol" style="display: flex; flex: 0 1 20px">
-            <button type="button" data-action="up" title="Move Up" {{#if disableUp}}disabled{{/if}}><i class="fas fa-arrow-up"></i></button>
-            <button type="button" data-action="down" title="Move Down" {{#if disableDown}}disabled{{/if}}><i class="fas fa-arrow-down"></i></button>
-            <button type="button" data-action="toggle-skip" class="toggle-skip-btn {{#if toggleSkipActive}}active{{/if}}" title="{{toggleSkipTitle}}" {{#if disableToggleSkip}}disabled{{/if}}><i class="fas fa-eye-slash"></i></button>
+            <button type="button" class="fep-phase-button" data-action="up" title="Move Up" {{#if disableUp}}disabled{{/if}}><i class="fas fa-arrow-up"></i></button>
+            <button type="button" class="fep-phase-button" data-action="down" title="Move Down" {{#if disableDown}}disabled{{/if}}><i class="fas fa-arrow-down"></i></button>
+            <button type="button" data-action="toggle-skip" class="fep-phase-button toggle-skip-btn {{#if toggleSkipActive}}active{{/if}}" title="{{toggleSkipTitle}}" {{#if disableToggleSkip}}disabled{{/if}}><i class="fas fa-eye-slash"></i></button>
           </div>
           <div class="flexcol" style="flex: 0 0 20px"></div>
           <div class="list-content flexcol">
@@ -52,6 +52,16 @@
               {{/each}}
             </select>
           </div>
+        </div>
+        <div class="flexrow">
+          <input 
+            type="checkbox" 
+            id="merge-tokens" 
+            name="mergeTokens" 
+            title="Merge any tokens from the new phase with the ones coming from the prior.  If off, any existing tokens in the scenes will be removed and only tokens coming from the prior phase will appear."
+            {{#if mergeTokens}}checked{{/if}}
+          >
+          <label for="merge-tokens">Merge Tokens</label>
         </div>
       </div>
     </section>

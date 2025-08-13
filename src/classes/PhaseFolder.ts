@@ -12,6 +12,7 @@ export class PhaseFolder extends DocumentWithFlags<PhaseFolderDoc>{
   private _currentPhaseIndex: number;
   private _phaseSceneIds: string[];
   private _skippedSceneIds: string[];
+  private _mergeTokens: boolean;
 
   /**
    * @param {PhaseFolderDoc} folderDoc - The Folder Foundry document
@@ -32,6 +33,7 @@ export class PhaseFolder extends DocumentWithFlags<PhaseFolderDoc>{
       this._currentPhaseIndex = this.getFlag(FolderFlagKey.currentPhaseIndex);
       this._phaseSceneIds = this.getFlag(FolderFlagKey.phaseSceneIds);
       this._skippedSceneIds = this.getFlag(FolderFlagKey.skippedSceneIds);
+      this._mergeTokens = this.getFlag(FolderFlagKey.mergeTokens);
     }
   }
 
@@ -83,7 +85,16 @@ export class PhaseFolder extends DocumentWithFlags<PhaseFolderDoc>{
   }
 
   public get id(): string {
-    return this._doc.id;
+    return this._doc.id || '';
+  }
+
+  public get mergeTokens(): boolean {
+    return this._mergeTokens;
+  }
+
+  public set mergeTokens(value: boolean) {
+    this._mergeTokens = value;
+    this.updateCumulative(FolderFlagKey.mergeTokens, value);
   }
   
   /**

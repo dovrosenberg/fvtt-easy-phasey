@@ -4,19 +4,22 @@ import { ModuleId, moduleId } from './index';
 import type { PhaseConfig } from '@/types';
 
 export const SETTINGS = {
-  config: "config",
-  phaseIndex: "phaseIndex",
+  config: "config",    // the config object; TODO: split into separate settings
+  phaseIndex: "phaseIndex",   // the current phase we're displaying
+  lastMasterSceneId: "lastMasterSceneId",   // the id of the last used master scene (so we can delete when needed)
 };
 
 export enum SettingKey {
   // global, internal
-  phaseIndex = 'phaseIndex',  // current phase
-  config = 'config',  // current configuration
+  phaseIndex = 'phaseIndex',  
+  config = 'config',  
+  lastMasterSceneId = 'lastMasterSceneId', 
 }
 
 export type SettingKeyType<K extends SettingKey> =
     K extends SettingKey.phaseIndex ? number :
     K extends SettingKey.config ? PhaseConfig :
+    K extends SettingKey.lastMasterSceneId ? (string | null) :
     never;  
 
 export class ModuleSettings {
@@ -70,14 +73,19 @@ export class ModuleSettings {
     },
     {
       name: "Phase Configuration",
-      hint: "Select the folder containing phase scenes, set their order, and optionally a master scene.",
+      hint: "Select the folder containing phase scenes and set their order.",
       settingID: SettingKey.config,
       default: {
         folderId: null,
         phaseSceneIds: [],
-        masterSceneId: null,
       } as PhaseConfig,
       type: Object,
+    },
+    {
+      name: "Last Master Scene Id",
+      settingID: SettingKey.lastMasterSceneId,
+      default: null,
+      type: String,
     },
   ];
   

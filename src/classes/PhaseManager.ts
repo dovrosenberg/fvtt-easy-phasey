@@ -1,4 +1,6 @@
 import { ModuleSettings, SettingKey, moduleId } from "@/settings";
+import { PhaseFolder } from './PhaseFolder';
+import folder from 'node_modules/@types/fvtt-types/src/foundry/common/documents/folder.mjs';
 
 const WHITELIST_DOCS = [
   "AmbientLight",
@@ -13,6 +15,8 @@ const WHITELIST_DOCS = [
 type Whitelisted = typeof WHITELIST_DOCS[number];
 
 export class PhaseManager { 
+  public static masterScene: Scene | null = null;
+
   /**
    * 
    * @param stepsToAdvance Number of steps to advance (negative to go backward)
@@ -29,24 +33,34 @@ export class PhaseManager {
     const sourceScene = game.scenes?.get(nextSceneId);
     if (!sourceScene) 
       throw new Error("Next phase scene not found.");
-  
-    let masterScene: Scene | undefined = cfg.masterSceneId ? game.scenes?.get(cfg.masterSceneId) : undefined;
-    if (!masterScene) {
-      // Create master from first phase on first run
-      const firstScene = game.scenes?.get(cfg.phaseSceneIds[0]);
-      if (!firstScene) 
-        throw new Error("First phase scene not found to create master.");
-      
-      masterScene = await Scene.create(firstScene.toObject()) as Scene;
-      cfg.masterSceneId = masterScene.id ?? null;
-      await ModuleSettings.set(SettingKey.config, cfg);
+
+    // make sure we have a master scene
+    if (!PhaseManager.masterScene) {
+      // Create master cloned from the current source scene
+      PhaseManager.masterScene = await Scene.create(sourceScene.toObject()) || null;
+
+      if (!PhaseManager.masterScene) 
+        throw new Error("Failed to create master scene.");
+
+      // we save the scene id so we can clean it up if we reload when we're done
+      await ModuleSettings.set(SettingKey.lastMasterSceneId, PhaseManager.masterScene.id ?? null);
+    } else {
+      // swap to the next scene
+      await PhaseManager.swapSceneDisplay(PhaseManager.masterScene, sourceScene);
     }
-  
-    await PhaseManager.swapSceneDisplay(masterScene, sourceScene);
-  
+    
     // update index
     idx = (idx + stepsToAdvance) % cfg.phaseSceneIds.length;
     await ModuleSettings.set(SettingKey.phaseIndex, idx);
+  }
+  
+  public static async cleanupMasterScene() {
+    if (!PhaseManager.masterScene) 
+      return;
+    
+    await PhaseManager.masterScene.delete();
+    
+    PhaseManager.masterScene = null;
   }
   
   private static async swapSceneDisplay(master: Scene, source: Scene) {
@@ -100,7 +114,7 @@ async function replaceEmbedded(master: Scene, source: Scene, docName: Whiteliste
   // Build list of docs to keep (persist flag)
   const toDeleteIds: string[] = [];
   for (const d of collection) {
-    const doc = d as foundry.abstract.Document;
+    const doc = d as foundry.abstract.Document<any, any, any>;
     const persist = getProperty(doc, `flags.${moduleId}.persist`);
     if (!persist) toDeleteIds.push(doc.id!);
   }

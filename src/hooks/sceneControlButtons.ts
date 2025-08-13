@@ -53,6 +53,13 @@ async function getSceneControlButtons(controls: Record<string, foundry.applicati
         order: 3,
         onChange: async () => {
           try {
+            // make sure we have a folder with at least one scene in it
+            const folders = game.folders?.filter((f: any) => f.type === 'Scene') ?? [];
+            if (folders.length === 0) {
+              ui.notifications?.warn('Before configuring a phased map, you must have at least one folder with a scene in it.');
+              return;
+            }
+
             new PhaseConfigApp().render(true);
           } catch (err: any) {
             console.error(`${moduleId} | Config open failed`, err);

@@ -1,5 +1,5 @@
 import { moduleId } from '@/settings';
-import { PhaseFolder } from '@/classes/PhaseFolder';
+import { PhaseFolder, PhaseManager } from '@/classes';
 
 type SelectOption = {
   id: string;
@@ -50,10 +50,6 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     form: {
       closeOnSubmit: true,
       submitOnChange: false,
-      handler: PhaseConfigApp.processForm,
-    },
-    actions: {
-      save: PhaseConfigApp.onSave,
     },
   };
 
@@ -66,14 +62,14 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
 
   // get the data needed to display
   async _prepareContext(_options: any = {}): Promise<PhaseConfigRenderContext> {
-    const folders = (game.folders?.filter((f: any) => f.type === 'Scene') ?? []).map((f: any) => ({ id: f.id, name: f.name })) as SelectOption[];
+    const folders = game.folders?.filter((f: any) => f.type === 'Scene')?.map((f: any) => ({ id: f.id, name: f.name })) ?? [] as SelectOption[];
 
     const selectedId = this.#selectedSceneId;
     const isSelectedSkipped = !!(selectedId && this.#skippedSceneIds.includes(selectedId));
 
     return {
       folders,
-      selectedFolder : this.#selectedFolder ?? null,
+      selectedFolder: this.#selectedFolder ?? null,
       disableUp: this.selectedSceneIndex === -1 || this.selectedSceneIndex === 0,
       disableDown: this.selectedSceneIndex === -1 || this.selectedSceneIndex === this.#sceneIds.length - 1,
       selectedSceneId: this.#selectedSceneId,
@@ -86,12 +82,6 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
       disableToggleSkip: !selectedId,
       toggleSkipActive: isSelectedSkipped,
     };
-  }
-
-  _getHeaderControls(): any {
-    return [
-      { action: 'save', label: 'Save', icon: 'fas fa-save' },
-    ];
   }
 
   /** setup the non-click event handlers */
@@ -121,27 +111,33 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     if (skipButton) {
       skipButton.addEventListener('click', (event: MouseEvent) => { event.preventDefault(); this.onToggleSkip(); });
     }
+
+    const saveButton = this.element?.querySelector('button[data-action="save"]') as HTMLButtonElement | null;
+    if (saveButton) {
+      saveButton.addEventListener('click', (event: MouseEvent) => { event.preventDefault(); this.onSave(); });
+    }
+    const saveActivateButton = this.element?.querySelector('button[data-action="save-activate"]') as HTMLButtonElement | null;
+    if (saveActivateButton) {
+      saveActivateButton.addEventListener('click', (event: MouseEvent) => { event.preventDefault(); this.onSave(true); });
+    }
   }
 
-  private static async onSave(event: Event) {
-    // event.preventDefault();
-    // const app = (this as any).element?.querySelector('fep-main');
-    // if (!app) return;
+  private async onSave(activate: boolean = false): Promise<void> {
+    // just copy the current values onto the folder
+    if (!this.#selectedFolder) 
+      throw new Error('Folder not found');
 
-    // const fd = new FormData(app as HTMLFormElement);
-    // const folderId = (fd.get('folderId') as string) || null;
-    // const phaseSceneIds = Array.from(((this as any).element!).querySelectorAll('[data-scene-id]'))
-    //   .map((el) => (el as HTMLElement).dataset.sceneId!)
-    //   .filter(Boolean);
+    this.#selectedFolder.phaseSceneIds = this.#sceneIds;
+    this.#selectedFolder.skippedSceneIds = this.#skippedSceneIds;
+    await this.#selectedFolder.save();
 
-    // const newCfg: PhaseConfig = {
-    //   folderId,
-    //   phaseSceneIds,
-    // };
+    ui.notifications?.info('Easy Phasey: Configuration saved.');
 
-    // await ModuleSettings.set(SettingKey.config, newCfg);
-    // ui.notifications?.info('Easy Phasey: Configuration saved.');
-    // (this as any).close();
+    if (activate) {
+      PhaseManager.activate(this.#selectedFolder);
+    }
+
+    this.close();
   }
 
   private onToggleSkip() {

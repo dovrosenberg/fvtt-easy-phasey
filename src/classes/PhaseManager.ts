@@ -1,4 +1,5 @@
 import { ModuleSettings, SettingKey, moduleId } from "@/settings";
+import { PhaseFolder } from "./PhaseFolder";
 
 const WHITELIST_DOCS = [
   "AmbientLight",
@@ -13,52 +14,90 @@ const WHITELIST_DOCS = [
 type Whitelisted = typeof WHITELIST_DOCS[number];
 
 export class PhaseManager { 
-  public static masterScene: Scene | null = null;
+  public static async activate(folder: PhaseFolder) {
+    // reset everything
+    await ModuleSettings.set(SettingKey.selectedFolderId, folder.id);
+    
+    await PhaseManager.cleanupMasterScene();
 
+    folder.currentPhaseIndex = 0;
+    await folder.save();
+
+    // this will create the new master scene
+    await PhaseManager.advancePhase(0);
+  }
+  
   /**
-   * 
+   * For now, this will wrap around
    * @param stepsToAdvance Number of steps to advance (negative to go backward)
    */
   public static async advancePhase(stepsToAdvance: number = 1) {
-    const cfg = ModuleSettings.get(SettingKey.config);
-    if (!cfg.phaseSceneIds?.length) 
-      throw new Error("Configure phases in Module Settings.");
+    const folderId = ModuleSettings.get(SettingKey.selectedFolderId);
+    if (!folderId) 
+      throw new Error("No folder selected.");
+
+    const folder = await PhaseFolder.fromId(folderId);
+    if (!folder) 
+      throw new Error("Folder not found.");
+    
+    // Determine next phase index 
+    let idx = (folder.currentPhaseIndex + stepsToAdvance + folder.phaseSceneIds.length) % folder.phaseSceneIds.length;
   
-    // Determine next phase index using a world setting
-    let idx = (ModuleSettings.get(SettingKey.phaseIndex) as number | undefined) ?? 0;
-  
-    const nextSceneId = cfg.phaseSceneIds[idx % cfg.phaseSceneIds.length];
-    const sourceScene = game.scenes?.get(nextSceneId);
+    // make sure there is at least one legit scene
+    if (!folder.phaseSceneIds.some((sceneId) => !folder.skippedSceneIds.includes(sceneId))) {
+      throw new Error("No valid scenes found.");
+    }
+
+    // skip forward until we get one not being skipped
+    while (folder.skippedSceneIds.includes(folder.phaseSceneIds[idx])) {
+      idx = (idx + 1 + folder.phaseSceneIds.length) % folder.phaseSceneIds.length;
+    }
+
+    if (idx === folder.currentPhaseIndex) {
+      // this is the only valid scene
+      ui.notifications?.warn('Easy Phasey: No other valid scenes found.');
+      return;
+    }
+
+    const sourceScene = game.scenes?.get(folder.phaseSceneIds[idx]);
     if (!sourceScene) 
       throw new Error("Next phase scene not found.");
 
     // make sure we have a master scene
-    if (!PhaseManager.masterScene) {
+    let masterScene: Scene | undefined = undefined;
+    let masterSceneId = ModuleSettings.get(SettingKey.masterSceneId);
+    
+    if (masterSceneId) {
+      masterScene = game.scenes?.get(masterSceneId);
+    }
+    if (!masterScene) {
       // Create master cloned from the current source scene
-      PhaseManager.masterScene = await Scene.create(sourceScene.toObject()) || null;
+      masterScene = await Scene.create(sourceScene.toObject());
 
-      if (!PhaseManager.masterScene) 
+      if (!masterScene) 
         throw new Error("Failed to create master scene.");
 
-      // we save the scene id so we can clean it up if we reload when we're done
-      await ModuleSettings.set(SettingKey.lastMasterSceneId, PhaseManager.masterScene.id ?? null);
-    } else {
-      // swap to the next scene
-      await PhaseManager.swapSceneDisplay(PhaseManager.masterScene, sourceScene);
+      await ModuleSettings.set(SettingKey.masterSceneId, masterScene.id ?? null);
     }
+
+    await PhaseManager.swapSceneDisplay(masterScene, sourceScene);
     
     // update index
-    idx = (idx + stepsToAdvance) % cfg.phaseSceneIds.length;
-    await ModuleSettings.set(SettingKey.phaseIndex, idx);
+    folder.currentPhaseIndex = idx;
+    await folder.save();
   }
   
   public static async cleanupMasterScene() {
-    if (!PhaseManager.masterScene) 
+    const masterSceneId = ModuleSettings.get(SettingKey.masterSceneId);
+    if (!masterSceneId) 
       return;
     
-    await PhaseManager.masterScene.delete();
+    const masterScene = game.scenes?.get(masterSceneId);
+    if (!masterScene) 
+      return;
     
-    PhaseManager.masterScene = null;
+    await masterScene.delete();
+    await ModuleSettings.set(SettingKey.masterSceneId, null);
   }
   
   private static async swapSceneDisplay(master: Scene, source: Scene) {

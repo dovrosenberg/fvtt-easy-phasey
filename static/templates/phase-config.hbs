@@ -58,9 +58,13 @@
   {{/if}}
 
   <footer class="fep-config-footer flexrow">
-    <button type="button" data-action="save" class="save" {{#unless selectedFolderId}}disabled{{/unless}}>
+    <button type="button" data-action="save" class="save" {{#unless selectedFolder}}disabled{{/unless}}>
       <i class="fas fa-save"></i> 
       Save
+    </button>
+    <button type="button" data-action="save-activate" class="save" {{#unless selectedFolder}}disabled{{/unless}}>
+      <i class="fas fa-save"></i> 
+      Save &amp; Activate
     </button>
   </footer>
 </form>

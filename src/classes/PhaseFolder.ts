@@ -82,6 +82,10 @@ export class PhaseFolder extends DocumentWithFlags<PhaseFolderDoc>{
     return this._doc.uuid;
   }
 
+  public get id(): string {
+    return this._doc.id;
+  }
+  
   /**
    * All of the scenes in this folder, in the proper order
    */

@@ -1,22 +1,20 @@
 import { localize } from '@/utils';
 import { ModuleId, moduleId } from './index';
 
-import type { PhaseConfig } from '@/types';
-
 export const SETTINGS = {
   selectedFolderId: "selectedFolderId",   // the id of the currently selected folder
-  lastMasterSceneId: "lastMasterSceneId",   // the id of the last used master scene (so we can delete when needed)
+  masterSceneId: "masterSceneId",   // the id of the last used master scene (so we can delete when needed)
 };
 
 export enum SettingKey {
   // global, internal
   selectedFolderId = 'selectedFolderId',
-  lastMasterSceneId = 'lastMasterSceneId', 
+  masterSceneId = 'masterSceneId', 
 }
 
 export type SettingKeyType<K extends SettingKey> =
     K extends SettingKey.selectedFolderId ? (string | null) :
-    K extends SettingKey.lastMasterSceneId ? (string | null) :
+    K extends SettingKey.masterSceneId ? (string | null) :
     never;  
 
 export class ModuleSettings {
@@ -71,7 +69,7 @@ export class ModuleSettings {
     },
     {
       name: "Last Master Scene Id",
-      settingID: SettingKey.lastMasterSceneId,
+      settingID: SettingKey.masterSceneId,
       default: null,
       type: String,
     },

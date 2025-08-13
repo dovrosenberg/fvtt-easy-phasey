@@ -1,5 +1,6 @@
 import { moduleId, ModuleSettings, SettingKey } from '@/settings';
 import type { PhaseConfig } from '@/types';
+import { PhaseFolder } from '@/classes/PhaseFolder';
 
 type SelectOption = {
   id: string;
@@ -7,12 +8,18 @@ type SelectOption = {
 };
 
 type PhaseConfigRenderContext = {
-  folders: SelectOption[];
-  selectedFolderId: string | null;
-  phaseScenes: SelectOption[];
+  folders: SelectOption[];  // all scene folders
+  selectedFolder: PhaseFolder | null;  // the selected folder
+  disableUp: boolean;  // whether the up button is disabled
+  disableDown: boolean;  // whether the down button is disabled
+  selectedSceneId: string | null;  // the selected (in the multiselect) scene id
+  sceneList: (SelectOption & { skipped: boolean })[];  // the list of scenes in the selected folder
 }
 
 export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2<PhaseConfigRenderContext>)  {
+  #selectedFolder: PhaseFolder | null = null;
+  #selectedSceneId: string | null = null;
+
   static PARTS = {
     'fep-main': {
       template: `modules/${moduleId}/templates/phase-config.hbs`,
@@ -24,7 +31,7 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     id: 'fep-config',
     title: 'Easy Phasey Configuration',
     tag: 'form',
-    width: 350,
+    width: 500,
     height: 'auto',
     resizable: true,
     position: { left: 100, top: 100 },
@@ -50,25 +57,21 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     },
   };
 
-  #config!: PhaseConfig;
+  private get selectedSceneIndex(): number {
+    return this.#selectedFolder?.phaseSceneIds.indexOf(this.#selectedSceneId) ?? -1;
+  }
 
   // get the data needed to display
   async _prepareContext(_options: any = {}): Promise<PhaseConfigRenderContext> {
-    this.#config = ModuleSettings.getClone(SettingKey.config);
-
     const folders = (game.folders?.filter((f: any) => f.type === 'Scene') ?? []).map((f: any) => ({ id: f.id, name: f.name })) as SelectOption[];
 
-    let phaseScenes = [] as SelectOption[];
-
-    if (this.#config.folderId) {
-      phaseScenes = game.scenes?.filter((s: any) => s.folder?.id === this.#config.folderId)
-        ?.map((s: any) => ({ id: s.id, name: s.name })) ?? [];
-    }
-    
     return {
       folders,
-      selectedFolderId: this.#config.folderId,
-      phaseScenes,
+      selectedFolder : this.#selectedFolder ?? null,
+      disableUp: this.selectedSceneIndex === -1 || this.selectedSceneIndex === 0,
+      disableDown: this.selectedSceneIndex === -1 || this.selectedSceneIndex === this.#selectedFolder.phaseSceneIds.length - 1,
+      selectedSceneId: this.#selectedSceneId,
+      sceneList: this.#selectedFolder?.scenes.map((s: any) => ({ id: s.id, name: s.name, skipped: this.#selectedFolder?.phaseSceneIds.includes(s.id) })) ?? [],
     };
   }
 
@@ -82,9 +85,14 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
   async _onRender(_context: PhaseConfigRenderContext): Promise<void> {
     // when folder is selected, repopulate the scene list and re-render
     const select = this.element?.querySelector('#fep-folder-select') as HTMLSelectElement | null;
-    if (!select) 
-      return;
-    select.addEventListener('change', this.onChooseFolder.bind(this));
+    if (select) {
+      select.addEventListener('change', this.onChooseFolder.bind(this));
+    }
+
+    const list = this.element?.querySelector('#phase-list') as HTMLSelectElement | null;
+    if (list) {
+      list.addEventListener('change', this.onChooseScene.bind(this));
+    }
   }
 
   private static async onSave(event: Event) {
@@ -108,58 +116,58 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     (this as any).close();
   }
 
-  private onAdd(event: Event) {
-    event.preventDefault();
-    const select = (this as any).element?.querySelector('select[name="addScene"]') as HTMLSelectElement | null;
-    if (!select) return;
-    const sceneId = select.value;
-    if (!sceneId || this.#config.phaseSceneIds.includes(sceneId)) return;
-    this.#config.phaseSceneIds.push(sceneId);
-    (this as any).render(true);
-  }
+  // private onAdd(event: Event) {
+  //   event.preventDefault();
+  //   const select = (this as any).element?.querySelector('select[name="addScene"]') as HTMLSelectElement | null;
+  //   if (!select) return;
+  //   const sceneId = select.value;
+  //   if (!sceneId || this.#config.phaseSceneIds.includes(sceneId)) return;
+  //   this.#config.phaseSceneIds.push(sceneId);
+  //   (this as any).render(true);
+  // }
 
-  private onRemove(event: Event) {
-    event.preventDefault();
-    const btn = event.currentTarget as HTMLElement;
-    const id = btn?.closest('[data-scene-id]')?.getAttribute('data-scene-id');
-    if (!id) return;
-    this.#config.phaseSceneIds = this.#config.phaseSceneIds.filter((x) => x !== id);
-    (this as any).render(true);
-  }
+  // private onRemove(event: Event) {
+  //   event.preventDefault();
+  //   const btn = event.currentTarget as HTMLElement;
+  //   const id = btn?.closest('[data-scene-id]')?.getAttribute('data-scene-id');
+  //   if (!id) return;
+  //   this.#config.phaseSceneIds = this.#config.phaseSceneIds.filter((x) => x !== id);
+  //   (this as any).render(true);
+  // }
 
-  private onMove(event: Event, delta: number) {
-    event.preventDefault();
-    const el = (event.currentTarget as HTMLElement)?.closest('[data-scene-id]') as HTMLElement | null;
-    if (!el) return;
-    const id = el.dataset.sceneId!;
-    const idx = this.#config.phaseSceneIds.indexOf(id);
-    if (idx < 0) return;
-    const target = idx + delta;
-    if (target < 0 || target >= this.#config.phaseSceneIds.length) return;
-    const [it] = this.#config.phaseSceneIds.splice(idx, 1);
-    this.#config.phaseSceneIds.splice(target, 0, it);
-    (this as any).render(true);
-  }
+  // private onMove(event: Event, delta: number) {
+  //   event.preventDefault();
+  //   const el = (event.currentTarget as HTMLElement)?.closest('[data-scene-id]') as HTMLElement | null;
+  //   if (!el) return;
+  //   const id = el.dataset.sceneId!;
+  //   const idx = this.#config.phaseSceneIds.indexOf(id);
+  //   if (idx < 0) return;
+  //   const target = idx + delta;
+  //   if (target < 0 || target >= this.#config.phaseSceneIds.length) return;
+  //   const [it] = this.#config.phaseSceneIds.splice(idx, 1);
+  //   this.#config.phaseSceneIds.splice(target, 0, it);
+  //   (this as any).render(true);
+  // }
 
   private async onChooseFolder(event: Event): Promise<void> {
     const select = event.currentTarget as HTMLSelectElement;
 
     if (!select || !select.value) {
-      this.#config.folderId = null;
-      this.#config.phaseSceneIds = [];
-      await ModuleSettings.set(SettingKey.config, this.#config);
+      this.#selectedFolder = null;
     } else {
-      const firstTime = !this.#config.folderId;
+      this.#selectedFolder = await PhaseFolder.fromId(select.value);
+    }
 
-      const folderId = select.value;
-      await ModuleSettings.set(SettingKey.config, this.#config);
+    this.render(true);
+  }
 
-      // If selecting a folder for the first time, prefill phase list with scenes from folder
-      if (firstTime && folderId) {
-        const scenes = game.scenes?.filter((s) => s.folder?.id === folderId) ?? [];
-        this.#config.phaseSceneIds = scenes.map((s) => s.id);
-      }
-      this.#config.folderId = folderId;
+  private async onChooseScene(event: Event): Promise<void> {
+    const select = event.currentTarget as HTMLSelectElement;
+
+    if (!select || !select.value) {
+      this.#selectedSceneId = null;
+    } else {
+      this.#selectedSceneId = select.value;
     }
 
     this.render(true);

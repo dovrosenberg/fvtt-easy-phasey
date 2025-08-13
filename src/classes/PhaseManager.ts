@@ -1,6 +1,4 @@
 import { ModuleSettings, SettingKey, moduleId } from "@/settings";
-import { PhaseFolder } from './PhaseFolder';
-import folder from 'node_modules/@types/fvtt-types/src/foundry/common/documents/folder.mjs';
 
 const WHITELIST_DOCS = [
   "AmbientLight",

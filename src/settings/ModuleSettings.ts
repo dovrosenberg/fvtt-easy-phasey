@@ -4,21 +4,18 @@ import { ModuleId, moduleId } from './index';
 import type { PhaseConfig } from '@/types';
 
 export const SETTINGS = {
-  config: "config",    // the config object; TODO: split into separate settings
-  phaseIndex: "phaseIndex",   // the current phase we're displaying
+  selectedFolderId: "selectedFolderId",   // the id of the currently selected folder
   lastMasterSceneId: "lastMasterSceneId",   // the id of the last used master scene (so we can delete when needed)
 };
 
 export enum SettingKey {
   // global, internal
-  phaseIndex = 'phaseIndex',  
-  config = 'config',  
+  selectedFolderId = 'selectedFolderId',
   lastMasterSceneId = 'lastMasterSceneId', 
 }
 
 export type SettingKeyType<K extends SettingKey> =
-    K extends SettingKey.phaseIndex ? number :
-    K extends SettingKey.config ? PhaseConfig :
+    K extends SettingKey.selectedFolderId ? (string | null) :
     K extends SettingKey.lastMasterSceneId ? (string | null) :
     never;  
 
@@ -66,20 +63,11 @@ export class ModuleSettings {
   // these are globals only used internally
   private static internalParams: (Partial<ClientSettings.SettingConfig> & { settingID: SettingKey })[] = [
     {
-      name: "Phase Index",
-      settingID: SettingKey.phaseIndex,
-      default: 0,
-      type: Number,
-    },
-    {
-      name: "Phase Configuration",
-      hint: "Select the folder containing phase scenes and set their order.",
-      settingID: SettingKey.config,
-      default: {
-        folderId: null,
-        phaseSceneIds: [],
-      } as PhaseConfig,
-      type: Object,
+      name: "Selected Folder Id",
+      hint: "The id of the currently selected folder.",
+      settingID: SettingKey.selectedFolderId,
+      default: null,
+      type: String,
     },
     {
       name: "Last Master Scene Id",

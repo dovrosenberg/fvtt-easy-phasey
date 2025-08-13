@@ -1,41 +1,74 @@
+{{!-- type PhaseConfigRenderContext = {
+  folders: SelectOption[];  // all scene folders
+  selectedFolder: PhaseFolder | null;  // the selected folder
+  disableUp: boolean;  // whether the up button is disabled
+  disableDown: boolean;  // whether the down button is disabled
+  selectedSceneId: string | null;  // the selected (in the multiselect) scene id
+  sceneList: (SelectOption & { skipped: boolean })[];  // the list of scenes in the selected folder
+} --}}
+
 <form>
-  <section class="fep-config-row">
-    <label for="folderId">Phase Folder</label>
-    <select id="fep-folder-select"name="folderId">
-      <option value="">-- All Scenes --</option>
-      {{#each folders}}
-        <option value="{{this.id}}" {{#if (eq ../selectedFolderId this.id)}}selected{{/if}}>{{this.name}}</option>
+  <section class="fep-config-row flexrow">
+    <div class="flexcol">
+      <label for="folderId">Phase Folder</label>
+      <select id="fep-folder-select"name="folderId">
+        <option value="">-- All Scenes --</option>
+        {{#each folders}}
+          <option value="{{this.id}}" {{#if (eq ../selectedFolder.id this.id)}}selected{{/if}}>{{this.name}}</option>
       {{/each}}
-    </select>
-  </section>
-
-  <section class="fep-config-row">
-    <div class="list-header">
-      <h5>Phase Scenes (in order)</h5>
-      {{!-- <div class="list-actions">
-        <select name="addScene">
-          {{#each allScenesInFolder}}
-            <option value="{{this.id}}">{{this.name}}</option>
-          {{/each}}
-        </select>
-        <button type="button" data-action="add"><i class="fas fa-plus"></i> Add</button> --}}
-
-      <ol class="phase-list">
-        {{#each phaseScenes}}
-          <li class="phase-item" data-scene-id="{{this.id}}">
-            <span class="name">{{this.name}}</span>
-            <div class="item-actions">
-              <button type="button" data-action="up" title="Move Up"><i class="fas fa-arrow-up"></i></button>
-              <button type="button" data-action="down" title="Move Down"><i class="fas fa-arrow-down"></i></button>
-              <button type="button" data-action="remove" title="Remove"><i class="fas fa-trash"></i></button>
-            </div>
-          </li>
-        {{/each}}
-      </ol>
+      </select>
     </div>
   </section>
 
-  <footer class="fep-config-footer">
-    <button type="button" data-action="save" class="save"><i class="fas fa-save"></i> Save</button>
+  {{#if selectedFolder}}
+    <section class="fep-config-row flexrow">
+      <div class="flexcol">
+        <div class="list-header flexrow">
+          <h4>Phase Scenes</h4>
+          {{!-- <div class="list-actions">
+            <select name="addScene">
+              {{#each allScenesInFolder}}
+                <option value="{{this.id}}">{{this.name}}</option>
+              {{/each}}
+            </select>
+            <button type="button" data-action="add"><i class="fas fa-plus"></i> Add</button> --}}
+        </div>
+
+        <div class="list-actions flexrow">
+          <div class="flexcol" style="display: flex; flex: 0 1 20px">
+            <button type="button" data-action="up" title="Move Up" {{#if disableUp}}disabled{{/if}}><i class="fas fa-arrow-up"></i></button>
+            <button type="button" data-action="down" title="Move Down" {{#if disableDown}}disabled{{/if}}><i class="fas fa-arrow-down"></i></button>
+            <button type="button" data-action="remove" title="Remove"><i class="fas fa-trash"></i></button>
+          </div>
+          <div class="flexcol" style="flex: 0 0 20px"></div>
+          <div class="list-content flexcol">
+            <select 
+              id="phase-list" 
+              multiple 
+              style="height: 80px"
+            >
+              {{#each sceneList}}
+                <option 
+                  value="{{this.id}}" 
+                  {{#if (eq ../selectedSceneId this.id)}}selected{{/if}}
+                  style="background: unset"
+                >
+                  {{this.name}}{{#if this.skipped}} (skipped){{/if}}
+                </option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+  {{/if}}
+
+  <div class="flexrow" style="height: 1.5rem"></div>
+
+  <footer class="fep-config-footer flexrow">
+    <button type="button" data-action="save" class="save" {{#unless selectedFolderId}}disabled{{/unless}}>
+      <i class="fas fa-save"></i> 
+      Save
+    </button>
   </footer>
 </form>

@@ -1,4 +1,10 @@
 // the config dialog
 #fep-config {
-  max-width: 350px;  
+  width: 500px;  
+
+  select.phase-list {
+    option.selected {
+      background: red;
+    }
+  }
 }

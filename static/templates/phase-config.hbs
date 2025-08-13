@@ -5,6 +5,8 @@
   disableDown: boolean;  // whether the down button is disabled
   selectedSceneId: string | null;  // the selected (in the multiselect) scene id
   sceneList: (SelectOption & { skipped: boolean })[];  // the list of scenes in the selected folder
+  toggleSkipTitle: string;     // tooltip for the toggle button
+  disableToggleSkip: boolean;  // whether the toggle button is disabled
 } --}}
 
 <form>
@@ -31,7 +33,7 @@
           <div class="flexcol" style="display: flex; flex: 0 1 20px">
             <button type="button" data-action="up" title="Move Up" {{#if disableUp}}disabled{{/if}}><i class="fas fa-arrow-up"></i></button>
             <button type="button" data-action="down" title="Move Down" {{#if disableDown}}disabled{{/if}}><i class="fas fa-arrow-down"></i></button>
-            <button type="button" data-action="toggle-skip" title="Skip"><i class="fas fa-trash"></i></button>
+            <button type="button" data-action="toggle-skip" class="toggle-skip-btn {{#if toggleSkipActive}}active{{/if}}" title="{{toggleSkipTitle}}" {{#if disableToggleSkip}}disabled{{/if}}><i class="fas fa-eye-slash"></i></button>
           </div>
           <div class="flexcol" style="flex: 0 0 20px"></div>
           <div class="list-content flexcol">
@@ -44,7 +46,6 @@
                 <option 
                   value="{{this.id}}" 
                   {{#if (eq ../selectedSceneId this.id)}}selected{{/if}}
-                  style="background: unset"
                 >
                   {{this.name}}{{#if this.skipped}} (skipped){{/if}}
                 </option>

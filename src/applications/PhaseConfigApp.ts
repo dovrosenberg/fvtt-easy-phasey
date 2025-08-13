@@ -1,5 +1,4 @@
-import { moduleId, ModuleSettings, SettingKey } from '@/settings';
-import type { PhaseConfig } from '@/types';
+import { moduleId } from '@/settings';
 import { PhaseFolder } from '@/classes/PhaseFolder';
 
 type SelectOption = {
@@ -14,6 +13,9 @@ type PhaseConfigRenderContext = {
   disableDown: boolean;  // whether the down button is disabled
   selectedSceneId: string | null;  // the selected (in the multiselect) scene id
   sceneList: (SelectOption & { skipped: boolean })[];  // the list of scenes in the selected folder
+  toggleSkipTitle: string;     // tooltip for the toggle button
+  disableToggleSkip: boolean;  // whether the toggle button is disabled
+  toggleSkipActive: boolean;   // whether the toggle button should appear active
 }
 
 export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2<PhaseConfigRenderContext>)  {
@@ -66,6 +68,9 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
   async _prepareContext(_options: any = {}): Promise<PhaseConfigRenderContext> {
     const folders = (game.folders?.filter((f: any) => f.type === 'Scene') ?? []).map((f: any) => ({ id: f.id, name: f.name })) as SelectOption[];
 
+    const selectedId = this.#selectedSceneId;
+    const isSelectedSkipped = !!(selectedId && this.#skippedSceneIds.includes(selectedId));
+
     return {
       folders,
       selectedFolder : this.#selectedFolder ?? null,
@@ -77,6 +82,9 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
         name: game.scenes?.get(s)?.name ?? '', 
         skipped: this.#skippedSceneIds.includes(s) 
       })) ?? [],
+      toggleSkipTitle: isSelectedSkipped ? 'Unskip' : 'Skip',
+      disableToggleSkip: !selectedId,
+      toggleSkipActive: isSelectedSkipped,
     };
   }
 

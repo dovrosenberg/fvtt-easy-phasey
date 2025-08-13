@@ -19,6 +19,8 @@ type PhaseConfigRenderContext = {
 export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2<PhaseConfigRenderContext>)  {
   #selectedFolder: PhaseFolder | null = null;
   #selectedSceneId: string | null = null;
+  #sceneIds: string[] = [];
+  #skippedSceneIds: string[] = [];
 
   static PARTS = {
     'fep-main': {
@@ -52,13 +54,14 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
       save: PhaseConfigApp.onSave,
       // add: (event, app) => (app as PhaseConfigApp).onAdd(event),
       // remove: (event, app) => (app as PhaseConfigApp).onRemove(event),
-      // up: (event, app) => (app as PhaseConfigApp).onMove(event, -1),
-      // down: (event, app) => (app as PhaseConfigApp).onMove(event, 1),
     },
   };
 
   private get selectedSceneIndex(): number {
-    return this.#selectedFolder?.phaseSceneIds.indexOf(this.#selectedSceneId) ?? -1;
+    if (!this.#selectedSceneId) 
+        return -1;
+
+    return this.#sceneIds.indexOf(this.#selectedSceneId) ?? -1;
   }
 
   // get the data needed to display
@@ -69,9 +72,13 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
       folders,
       selectedFolder : this.#selectedFolder ?? null,
       disableUp: this.selectedSceneIndex === -1 || this.selectedSceneIndex === 0,
-      disableDown: this.selectedSceneIndex === -1 || this.selectedSceneIndex === this.#selectedFolder.phaseSceneIds.length - 1,
+      disableDown: this.selectedSceneIndex === -1 || this.selectedSceneIndex === this.#sceneIds.length - 1,
       selectedSceneId: this.#selectedSceneId,
-      sceneList: this.#selectedFolder?.scenes.map((s: any) => ({ id: s.id, name: s.name, skipped: this.#selectedFolder?.phaseSceneIds.includes(s.id) })) ?? [],
+      sceneList: this.#sceneIds.map((s: string) => ({ 
+        id: s, 
+        name: game.scenes?.get(s)?.name ?? '', 
+        skipped: this.#skippedSceneIds.includes(s) 
+      })) ?? [],
     };
   }
 
@@ -86,34 +93,44 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     // when folder is selected, repopulate the scene list and re-render
     const select = this.element?.querySelector('#fep-folder-select') as HTMLSelectElement | null;
     if (select) {
-      select.addEventListener('change', this.onChooseFolder.bind(this));
+      select.addEventListener('change', (event: Event) => this.onChooseFolder(event));
     }
 
     const list = this.element?.querySelector('#phase-list') as HTMLSelectElement | null;
     if (list) {
-      list.addEventListener('change', this.onChooseScene.bind(this));
+      list.addEventListener('change', (event: Event) => this.onChooseScene(event));
+    }
+
+    const upButton = this.element?.querySelector('button[data-action="up"]') as HTMLButtonElement | null;
+    if (upButton) {
+      upButton.addEventListener('click', (event: MouseEvent) => { event.preventDefault(); this.onMove(-1); });
+    }
+
+    const downButton = this.element?.querySelector('button[data-action="down"]') as HTMLButtonElement | null;
+    if (downButton) {
+      downButton.addEventListener('click', (event: MouseEvent) => { event.preventDefault(); this.onMove(1); });
     }
   }
 
   private static async onSave(event: Event) {
-    event.preventDefault();
-    const app = (this as any).element?.querySelector('fep-main');
-    if (!app) return;
+    // event.preventDefault();
+    // const app = (this as any).element?.querySelector('fep-main');
+    // if (!app) return;
 
-    const fd = new FormData(app as HTMLFormElement);
-    const folderId = (fd.get('folderId') as string) || null;
-    const phaseSceneIds = Array.from(((this as any).element!).querySelectorAll('[data-scene-id]'))
-      .map((el) => (el as HTMLElement).dataset.sceneId!)
-      .filter(Boolean);
+    // const fd = new FormData(app as HTMLFormElement);
+    // const folderId = (fd.get('folderId') as string) || null;
+    // const phaseSceneIds = Array.from(((this as any).element!).querySelectorAll('[data-scene-id]'))
+    //   .map((el) => (el as HTMLElement).dataset.sceneId!)
+    //   .filter(Boolean);
 
-    const newCfg: PhaseConfig = {
-      folderId,
-      phaseSceneIds,
-    };
+    // const newCfg: PhaseConfig = {
+    //   folderId,
+    //   phaseSceneIds,
+    // };
 
-    await ModuleSettings.set(SettingKey.config, newCfg);
-    ui.notifications?.info('Easy Phasey: Configuration saved.');
-    (this as any).close();
+    // await ModuleSettings.set(SettingKey.config, newCfg);
+    // ui.notifications?.info('Easy Phasey: Configuration saved.');
+    // (this as any).close();
   }
 
   // private onAdd(event: Event) {
@@ -135,27 +152,49 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
   //   (this as any).render(true);
   // }
 
-  // private onMove(event: Event, delta: number) {
-  //   event.preventDefault();
-  //   const el = (event.currentTarget as HTMLElement)?.closest('[data-scene-id]') as HTMLElement | null;
-  //   if (!el) return;
-  //   const id = el.dataset.sceneId!;
-  //   const idx = this.#config.phaseSceneIds.indexOf(id);
-  //   if (idx < 0) return;
-  //   const target = idx + delta;
-  //   if (target < 0 || target >= this.#config.phaseSceneIds.length) return;
-  //   const [it] = this.#config.phaseSceneIds.splice(idx, 1);
-  //   this.#config.phaseSceneIds.splice(target, 0, it);
-  //   (this as any).render(true);
-  // }
+  private onMove(delta: number) {
+    if (!this.#selectedFolder || !this.#selectedSceneId) 
+      return;
+
+    // find new position
+    const sceneIds = [...this.#sceneIds];
+
+    // we're going to move the one with id this.#selectedSceneId delta spots
+    const idx = this.selectedSceneIndex;
+
+    if (idx < 0) 
+      return;
+
+    const newIndex = Math.max(0, Math.min(sceneIds.length - 1, idx + delta));
+
+    // remove from current posisiont
+    const [it] = sceneIds.splice(idx, 1);
+
+    // insert at new position
+    sceneIds.splice(newIndex, 0, it);
+
+    this.#sceneIds = sceneIds;
+    this.render(true);
+  }
 
   private async onChooseFolder(event: Event): Promise<void> {
     const select = event.currentTarget as HTMLSelectElement;
 
     if (!select || !select.value) {
       this.#selectedFolder = null;
+      this.#sceneIds = [];
+      this.#skippedSceneIds = [];
     } else {
       this.#selectedFolder = await PhaseFolder.fromId(select.value);
+
+      if (this.#selectedFolder)  {
+        // get our working copies
+        this.#sceneIds = [...(this.#selectedFolder.phaseSceneIds || [])];
+        this.#skippedSceneIds = [...(this.#selectedFolder.skippedSceneIds || [])];
+      } else {
+        this.#sceneIds = [];
+        this.#skippedSceneIds = [];
+      }
     }
 
     this.render(true);

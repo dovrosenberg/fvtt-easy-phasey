@@ -14,7 +14,7 @@
     <div class="flexcol">
       <label for="folderId"><b>Phase Folder</b></label>
       <select id="fep-folder-select"name="folderId">
-        <option value="">-- All Scenes --</option>
+        <option value="">-- Choose a folder --</option>
         {{#each folders}}
           <option value="{{this.id}}" {{#if (eq ../selectedFolder.id this.id)}}selected{{/if}}>{{this.name}}</option>
       {{/each}}
@@ -67,7 +67,7 @@
     </section>
   {{/if}}
 
-  <footer class="fep-config-footer flexrow">
+  <footer class="fep-config-footer flexrow" style="gap: 1rem">
     <button type="button" data-action="save" class="save" {{#unless selectedFolder}}disabled{{/unless}}>
       <i class="fas fa-save"></i> 
       Save

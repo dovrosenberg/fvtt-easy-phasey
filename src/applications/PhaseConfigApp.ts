@@ -119,10 +119,17 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     if (saveButton) {
       saveButton.addEventListener('click', (event: MouseEvent) => { event.preventDefault(); this.onSave(); });
     }
+
     const saveActivateButton = this.element?.querySelector('button[data-action="save-activate"]') as HTMLButtonElement | null;
     if (saveActivateButton) {
       saveActivateButton.addEventListener('click', (event: MouseEvent) => { event.preventDefault(); this.onSave(true); });
     }
+
+    const mergeTokensCheckbox = this.element?.querySelector('#merge-tokens') as HTMLInputElement | null;
+    if (mergeTokensCheckbox) {
+      mergeTokensCheckbox.addEventListener('change', (event: Event) => { event.preventDefault(); this.onToggleMergeTokens(); });
+    }
+    
   }
 
   private async onSave(activate: boolean = false): Promise<void> {
@@ -142,6 +149,15 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     }
 
     this.close();
+  }
+
+  private onToggleMergeTokens() {
+    const mergeTokensCheckbox = this.element?.querySelector('#merge-tokens') as HTMLInputElement | null;
+    if (!mergeTokensCheckbox) 
+      return;
+
+    this.#mergeTokens = mergeTokensCheckbox.checked;
+    this.render(true);
   }
 
   private onToggleSkip() {

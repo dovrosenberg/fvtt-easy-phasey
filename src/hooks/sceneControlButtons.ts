@@ -15,7 +15,8 @@ async function getSceneControlButtons(controls: Record<string, foundry.applicati
     lastOrder = Math.max(lastOrder, c.order);
   }
 
-  // TODO: set visible on forward/back to false when there's no scene configured
+  const isPhaseInProgress = PhaseManager.phaseInProgress;
+
   const control = {
     name: CONTROL_NAME,
     order: lastOrder + 1,
@@ -29,6 +30,7 @@ async function getSceneControlButtons(controls: Record<string, foundry.applicati
         icon: 'fas fa-step-forward',
         button: true,
         order: 1,
+        visible: isPhaseInProgress,
         onChange: async () => PhaseManager.advancePhase(1).catch(err => {
           console.error(`${moduleId} | Forward failed`, err);
           ui.notifications?.error(`Easy Phasey: ${err?.message ?? err}`);
@@ -40,10 +42,15 @@ async function getSceneControlButtons(controls: Record<string, foundry.applicati
         icon: 'fas fa-step-backward',
         button: true,
         order: 2,
-        onChange: async () => PhaseManager.advancePhase(-1).catch(err => {
-          console.error(`${moduleId} | Back failed`, err);
-          ui.notifications?.error(`Easy Phasey: ${err?.message ?? err}`);
-        })
+        visible: isPhaseInProgress,
+        onChange: async () => { 
+          try {
+            await PhaseManager.advancePhase(-1);
+          } catch (err: any) {
+            console.error(`${moduleId} | Back failed`, err);
+            ui.notifications?.error(`Easy Phasey: ${err?.message ?? err}`);
+          }
+        }
       },
       'config': {
         name: 'config',

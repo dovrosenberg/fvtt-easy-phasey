@@ -3,18 +3,15 @@ import { ModuleId, moduleId } from './index';
 
 export const SETTINGS = {
   selectedFolderId: "selectedFolderId",   // the id of the currently selected folder
-  masterSceneId: "masterSceneId",   // the id of the last used master scene (so we can delete when needed)
 };
 
 export enum SettingKey {
   // global, internal
   selectedFolderId = 'selectedFolderId',
-  masterSceneId = 'masterSceneId', 
 }
 
 export type SettingKeyType<K extends SettingKey> =
     K extends SettingKey.selectedFolderId ? (string | null) :
-    K extends SettingKey.masterSceneId ? (string | null) :
     never;  
 
 export class ModuleSettings {
@@ -64,12 +61,6 @@ export class ModuleSettings {
       name: "Selected Folder Id",
       hint: "The id of the currently selected folder.",
       settingID: SettingKey.selectedFolderId,
-      default: null,
-      type: String,
-    },
-    {
-      name: "Last Master Scene Id",
-      settingID: SettingKey.masterSceneId,
       default: null,
       type: String,
     },

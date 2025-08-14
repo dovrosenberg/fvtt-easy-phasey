@@ -10,6 +10,7 @@ export enum FolderFlagKey {
   phaseSceneIds = 'phaseSceneIds',   // the (ordered) list of scenes
   skippedSceneIds = 'skippedSceneIds',   // scenes we're supposed to skip
   mergeTokens = 'mergeTokens',   // do we want to merge tokens already existing in each phase or clear them?
+  masterSceneId = 'masterSceneId', // the id of the master scene for this folder
 }
 
 export type FolderFlagType<K extends FolderFlagKey> =
@@ -18,6 +19,7 @@ export type FolderFlagType<K extends FolderFlagKey> =
   K extends FolderFlagKey.phaseSceneIds ? string[] :
   K extends FolderFlagKey.skippedSceneIds ? string[] :
   K extends FolderFlagKey.mergeTokens ? boolean :
+  K extends FolderFlagKey.masterSceneId ? (string | null) :
   never;
 
 export const folderFlagSettings = [
@@ -27,7 +29,7 @@ export const folderFlagSettings = [
   },
   {
     flagId: FolderFlagKey.currentPhaseIndex,
-    default: 1,
+    default: 0,
   },
   {
     flagId: FolderFlagKey.phaseSceneIds,
@@ -40,6 +42,10 @@ export const folderFlagSettings = [
   {
     flagId: FolderFlagKey.mergeTokens,
     default: true,
+  },
+  {
+    flagId: FolderFlagKey.masterSceneId,
+    default: null,
   },
 ] as FlagSettings<FolderFlagKey, {[K in FolderFlagKey]: FolderFlagType<K>}>[];
 

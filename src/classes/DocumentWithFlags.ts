@@ -164,16 +164,13 @@ export class DocumentWithFlags<DocType extends ValidDocTypes> {
     FK extends FlagKey<DocType> = FlagKey<DocType>,
     FT extends FlagType<DocType, FK> = FlagType<DocType, FK>
   >(flag: FK, value: FT): void => {
-    this._cumulativeUpdate = {
-      ...this._cumulativeUpdate,
+    this._cumulativeUpdate = foundry.utils.mergeObject(this._cumulativeUpdate, {
       flags: {
-        ...this._cumulativeUpdate.flags,
         [moduleId]: {
-          ...(this._cumulativeUpdate.flags?.[moduleId] || {}),
           [flag]: value
         }
       }
-    };
+    });
   };
 
   /**

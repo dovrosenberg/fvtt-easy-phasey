@@ -36,14 +36,35 @@ export class PhaseFolder extends DocumentWithFlags<PhaseFolderDoc>{
     }
   }
 
+  /** 
+   * Sets the initial values for the folder.  This is called when the folder is first created.
+   */
   setInitialValues() {
+    this.resetPhasesToDefault();
     this.masterSceneId = null;
+    this.mergeTokens = true;
+  }
 
+  /** returns whether the scenes in the folder are the sames as the ones in the phase id list */
+  get contentsChanged() {
+    // rq
+    const folderContents = this._doc.contents.
+      map((s) => s.id).
+      filter((s: string) => s !== this._masterSceneId);
+    const phaseContents = this.phaseSceneIds.filter((s: string) => s !== this._masterSceneId);
+
+    //  use the calculated property because it
+    // they've changed if the length doesn't match or there's some id in the first list that isn't in the second (don't have to check both ways if the length matches)
+    return phaseContents.length !== folderContents.length ||
+      phaseContents.some((id) => !folderContents.includes(id));
+  }
+
+  /** resets the phases to match the scenes in the folder */
+  resetPhasesToDefault() {
     // initial order is based on name
     this.phaseSceneIds = this._doc.contents.sort((a: any, b: any) => a.name.localeCompare(b.name)).map((s: any) => s.id);
     this.skippedSceneIds = [];
     this.currentPhaseIndex = 0;
-    this.mergeTokens = true;
   }
 
   static async fromId(folderId: string, _options?: Record<string, any>): Promise<PhaseFolder | null> {
@@ -61,10 +82,8 @@ export class PhaseFolder extends DocumentWithFlags<PhaseFolderDoc>{
         await phaseFolder.save();
       } else {
         // make sure it has the same scenes - otherwise reset it
-        if (phaseFolder.phaseSceneIds.length !== folderDoc.contents.length ||
-            phaseFolder.phaseSceneIds.some((id) => !folderDoc.contents.some((s: any) => s.id === id))) {
-
-          phaseFolder.setInitialValues();
+        if (phaseFolder.contentsChanged) {
+          phaseFolder.resetPhasesToDefault();
           await phaseFolder.save();
         }
       }

@@ -3,7 +3,7 @@ import { PhaseFolder } from "./PhaseFolder";
 
 // these are properties to copy
 const SCENE_DATA = [
-  'active',
+  // 'active',   // don't mess with active
   'background',
   'backgroundColor',
   'base',
@@ -42,8 +42,6 @@ const SCENE_DATA = [
   'weather',
   'width',
 ]
-
-type SceneDataField = typeof SCENE_DATA[number];
 
 export class PhaseManager { 
   public static get phaseInProgress() {
@@ -163,12 +161,12 @@ export class PhaseManager {
 
     // need to add in the tokens
     if (mergeTokens) {
-      update.tokens = priorSource.tokens;
+      update.tokens = source.tokens;
       // const tokenCollection = priorSource.getEmbeddedCollection('Token');
       // debugger;
       // update.tokens = [...source.tokens, ...priorSource.tokens];
     } else {
-      update.tokens = priorSource.tokens;
+      update.tokens = source.tokens;
     }
 
   

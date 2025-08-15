@@ -10,13 +10,18 @@ You just create a folder with the scenes you want to use for the phases, and the
 Why phased maps?  If you're reading this you probably already know, but there are a variety of use cases for phased maps: 
 - Battles that change over time to put pressure on the characters (rising water, lava changing patterns, walls closing in)
 - Transition a map between times of day, weather, etc.
+- Easily time when and where new actors should appear
 - Probably others I can't think of at the moment
 
 
 ## Current features
 [Feature requests?](https://github.com/dovrosenberg/fvtt-easy-phasey/issues/new?template=feature_request.md)
 
-- 
+- Select any folder of scenes to use for the phases
+- Choose the order the phases should appear, and mark scenes to skip
+- Track the chosen phases/order as well as the current phase you're in for each folder (i.e. you can have multiple phased scenes in various parts of their progression at once)
+- Choose to ignore stray tokens in the phases as you progress or to merge them in --- this lets you use phases to automatically add additional actors when they come up
+
 
 ## Issues?
 

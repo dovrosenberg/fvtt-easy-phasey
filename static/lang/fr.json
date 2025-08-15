@@ -1,4 +1,33 @@
 {
   "fep": {
+    "windowTitle": "Easy Phasey - Configurer les phases",
+    "notifications": {
+      "noValidScenes": "Easy Phasey : Aucune autre scène valide trouvée.",
+      "masterSceneNotActive": "Easy Phasey : Pourquoi la phase n'a-t-elle pas changé ? Parce que vous ne regardez pas la scène active.",
+      "noValidFolder": "Avant de configurer une carte par phases, vous devez avoir au moins un dossier avec une scène dedans."
+    },
+    "labels": {
+      "skipped": "sauté",
+      "mergeTokens": "Fusionner les jetons",
+      "save": "Enregistrer",
+      "saveActivate": "Enregistrer et activer",
+      "phaseScenes": "Scènes de phase",
+      "chooseFolder": "Choisir un dossier",
+      "phaseFolder": "Dossier de phase",
+      "masterScene": "Scène principale"
+    },
+    "controls": {
+      "nextPhase": "Phase suivante",
+      "prevPhase": "Phase précédente"
+    },
+    "tooltips": {
+      "mergeTokens": "Fusionner les jetons de la nouvelle phase avec ceux provenant de la précédente. Si désactivé, tous les jetons existants dans les scènes seront supprimés et seuls les jetons provenant de la phase précédente apparaîtront."
+    },
+    "keybindings": {
+      "prevPhase": "Phase précédente",
+      "prevPhaseHelp": "Passer à la phase précédente dans l'ordre (bouclera)",
+      "nextPhase": "Phase suivante",
+      "nextPhaseHelp": "Passer à la phase suivante dans l'ordre (bouclera)"
+    }
   }
 }

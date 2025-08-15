@@ -12,9 +12,9 @@
 <form>
   <section class="fep-config-row flexrow" style="margin-bottom: 1rem">
     <div class="flexcol">
-      <label for="folderId"><b>Phase Folder</b></label>
+      <label for="folderId"><b>{{localize 'fep.labels.phaseFolder'}}</b></label>
       <select id="fep-folder-select"name="folderId">
-        <option value="">-- Choose a folder --</option>
+        <option value="">{{localize 'fep.labels.chooseFolder'}}</option>
         {{#each folders}}
           <option value="{{this.id}}" {{#if (eq ../selectedFolder.id this.id)}}selected{{/if}}>{{this.name}}</option>
       {{/each}}
@@ -26,7 +26,7 @@
     <section class="fep-config-row flexrow" style="margin-bottom: 1rem">
       <div class="flexcol">
         <div class="list-header flexrow">
-          <b>Phase Scenes</b>
+          <b>{{localize 'fep.labels.phaseScenes'}}</b>
         </div>
 
         <div class="list-actions flexrow">
@@ -47,7 +47,7 @@
                   value="{{this.id}}" 
                   {{#if (eq ../selectedSceneId this.id)}}selected{{/if}}
                 >
-                  {{this.name}}{{#if this.skipped}} (skipped){{/if}}
+                  {{this.name}}{{#if this.skipped}} ({{localize 'fep.labels.skipped' }}){{/if}}
                 </option>
               {{/each}}
             </select>
@@ -58,10 +58,10 @@
             type="checkbox" 
             id="merge-tokens" 
             name="mergeTokens" 
-            title="Merge any tokens from the new phase with the ones coming from the prior.  If off, any existing tokens in the scenes will be removed and only tokens coming from the prior phase will appear."
+            title="{{localize 'fep.tooltips.mergeTokens'}}"
             {{#if mergeTokens}}checked{{/if}}
           >
-          <label for="merge-tokens">Merge Tokens</label>
+          <label for="merge-tokens">{{localize 'fep.labels.mergeTokens'}}</label>
         </div>
       </div>
     </section>
@@ -70,11 +70,11 @@
   <footer class="fep-config-footer flexrow" style="gap: 1rem">
     <button type="button" data-action="save" class="save" {{#unless selectedFolder}}disabled{{/unless}}>
       <i class="fas fa-save"></i> 
-      Save
+      {{localize 'fep.labels.save'}}
     </button>
     <button type="button" data-action="save-activate" class="save" {{#unless selectedFolder}}disabled{{/unless}}>
       <i class="fas fa-save"></i> 
-      Save &amp; Activate
+      {{localize 'fep.labels.saveActivate'}}
     </button>
   </footer>
 </form>

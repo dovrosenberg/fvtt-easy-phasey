@@ -1,6 +1,7 @@
 import { moduleId } from '@/settings';
 import { PhaseManager } from '@/classes';
 import { PhaseConfigApp } from '@/applications/PhaseConfigApp';
+import { localize } from '@/localize';
 
 const CONTROL_NAME = 'easy-phasey';
 
@@ -26,7 +27,7 @@ async function getSceneControlButtons(controls: Record<string, foundry.applicati
     tools: {
       'forward': {
         name: 'forward',
-        title: 'Next Phase',
+        title: localize('controls.nextPhase'),
         icon: 'fas fa-step-forward',
         button: true,
         order: 1,
@@ -38,7 +39,7 @@ async function getSceneControlButtons(controls: Record<string, foundry.applicati
       },
       'back': {
         name: 'back',
-        title: 'Previous Phase',
+        title: localize('controls.prevPhase'),
         icon: 'fas fa-step-backward',
         button: true,
         order: 2,
@@ -63,7 +64,7 @@ async function getSceneControlButtons(controls: Record<string, foundry.applicati
             // make sure we have a folder with at least one scene in it
             const folders = game.folders?.filter((f: any) => f.type === 'Scene') ?? [];
             if (folders.length === 0) {
-              ui.notifications?.warn('Before configuring a phased map, you must have at least one folder with a scene in it.');
+              ui.notifications?.warn(localize('notifications.noValidFolder'));
               return;
             }
 

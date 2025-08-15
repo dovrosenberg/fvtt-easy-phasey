@@ -1,5 +1,6 @@
 import { ModuleSettings, SettingKey } from "@/settings";
 import { PhaseFolder } from "./PhaseFolder";
+import { localize } from "@/localize";
 
 // these are properties to copy
 const SCENE_DATA = [
@@ -109,7 +110,7 @@ export class PhaseManager {
 
       if (idx === folder.currentPhaseIndex) {
         // this is the only valid scene
-        ui.notifications?.warn('Easy Phasey: No other valid scenes found.');
+        ui.notifications?.warn(localize('notifications.noValidScenes'));
         return;
       }
     }
@@ -131,7 +132,7 @@ export class PhaseManager {
       if (!masterScene) 
         throw new Error("Failed to create master scene.");
 
-      await masterScene.update({name: `Easy Phasey Master Scene - ${folder.raw.name}`})
+      await masterScene.update({name: `Easy Phasey ${localize('labels.masterScene')} - ${folder.raw.name}`})
 
       folder.masterSceneId = masterScene.id;
       await folder.save();
@@ -140,7 +141,7 @@ export class PhaseManager {
 
       // alert GM if they're looking at some other scene
       if (masterScene.id !== game.user.viewedScene) {
-        ui.notifications?.warn('Easy Phasey: Why didn\'t the phase change? Because you\'re not looking at the active scene.');
+        ui.notifications?.warn(localize('notifications.masterSceneNotActive'));
       }
     } else {
       if (!masterScene.active) {
@@ -148,7 +149,7 @@ export class PhaseManager {
 
         // alert GM if they're looking at some other scene
         if (masterScene.id !== game.user.viewedScene) {
-          ui.notifications?.warn('Easy Phasey: Why didn\'t the phase change? Because you\'re not looking at the active scene.');
+          ui.notifications?.warn(localize('notifications.masterSceneNotActive'));
         }
       }
 
@@ -182,33 +183,3 @@ export class PhaseManager {
     if (canvas?.ready) await canvas.draw();
   }
 }
-
-// async function replaceEmbedded(master: Scene, source: Scene, docName: Whitelisted) {
-//   const collection = master.getEmbeddedCollection(docName);
-//   const srcCollection = source.getEmbeddedCollection(docName);
-
-//   // Build list of docs to keep (persist flag)
-//   const toDeleteIds: string[] = [];
-//   for (const d of collection) {
-//     const doc = d as foundry.abstract.Document<any, any, any>;
-//     const persist = getProperty(doc, `flags.${moduleId}.persist`);
-//     if (!persist) toDeleteIds.push(doc.id!);
-//   }
-
-//   // Prepare new docs (strip _id)
-//   const toCreate = srcCollection.map((d: any) => {
-//     const raw = d.toObject();
-//     delete raw._id;
-//     // Copy flags as-is; persist flag on source will carry over if present
-//     return raw;
-//   });
-
-//   // Special handling for walls to minimize token vision flicker: create first then delete
-//   if (docName === "Wall") {
-//     if (toCreate.length) await master.createEmbeddedDocuments(docName, toCreate);
-//     if (toDeleteIds.length) await master.deleteEmbeddedDocuments(docName, toDeleteIds);
-//   } else {
-//     if (toDeleteIds.length) await master.deleteEmbeddedDocuments(docName, toDeleteIds);
-//     if (toCreate.length) await master.createEmbeddedDocuments(docName, toCreate);
-//   }
-// }

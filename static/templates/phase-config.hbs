@@ -1,0 +1,80 @@
+{{!-- type PhaseConfigRenderContext = {
+  folders: SelectOption[];  // all scene folders
+  selectedFolder: PhaseFolder | null;  // the selected folder
+  disableUp: boolean;  // whether the up button is disabled
+  disableDown: boolean;  // whether the down button is disabled
+  selectedSceneId: string | null;  // the selected (in the multiselect) scene id
+  sceneList: (SelectOption & { skipped: boolean })[];  // the list of scenes in the selected folder
+  toggleSkipTitle: string;     // tooltip for the toggle button
+  disableToggleSkip: boolean;  // whether the toggle button is disabled
+} --}}
+
+<form>
+  <section class="fep-config-row flexrow" style="margin-bottom: 1rem">
+    <div class="flexcol">
+      <label for="folderId"><b>Phase Folder</b></label>
+      <select id="fep-folder-select"name="folderId">
+        <option value="">-- Choose a folder --</option>
+        {{#each folders}}
+          <option value="{{this.id}}" {{#if (eq ../selectedFolder.id this.id)}}selected{{/if}}>{{this.name}}</option>
+      {{/each}}
+      </select>
+    </div>
+  </section>
+
+  {{#if selectedFolder}}
+    <section class="fep-config-row flexrow" style="margin-bottom: 1rem">
+      <div class="flexcol">
+        <div class="list-header flexrow">
+          <b>Phase Scenes</b>
+        </div>
+
+        <div class="list-actions flexrow">
+          <div class="flexcol" style="display: flex; flex: 0 1 20px">
+            <button type="button" class="fep-phase-button" data-action="up" title="Move Up" {{#if disableUp}}disabled{{/if}}><i class="fas fa-arrow-up"></i></button>
+            <button type="button" class="fep-phase-button" data-action="down" title="Move Down" {{#if disableDown}}disabled{{/if}}><i class="fas fa-arrow-down"></i></button>
+            <button type="button" data-action="toggle-skip" class="fep-phase-button toggle-skip-btn {{#if toggleSkipActive}}active{{/if}}" title="{{toggleSkipTitle}}" {{#if disableToggleSkip}}disabled{{/if}}><i class="fas fa-eye-slash"></i></button>
+          </div>
+          <div class="flexcol" style="flex: 0 0 20px"></div>
+          <div class="list-content flexcol">
+            <select 
+              id="phase-list" 
+              multiple 
+              style="height: 80px"
+            >
+              {{#each sceneList}}
+                <option 
+                  value="{{this.id}}" 
+                  {{#if (eq ../selectedSceneId this.id)}}selected{{/if}}
+                >
+                  {{this.name}}{{#if this.skipped}} (skipped){{/if}}
+                </option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+        <div class="flexrow">
+          <input 
+            type="checkbox" 
+            id="merge-tokens" 
+            name="mergeTokens" 
+            title="Merge any tokens from the new phase with the ones coming from the prior.  If off, any existing tokens in the scenes will be removed and only tokens coming from the prior phase will appear."
+            {{#if mergeTokens}}checked{{/if}}
+          >
+          <label for="merge-tokens">Merge Tokens</label>
+        </div>
+      </div>
+    </section>
+  {{/if}}
+
+  <footer class="fep-config-footer flexrow" style="gap: 1rem">
+    <button type="button" data-action="save" class="save" {{#unless selectedFolder}}disabled{{/unless}}>
+      <i class="fas fa-save"></i> 
+      Save
+    </button>
+    <button type="button" data-action="save-activate" class="save" {{#unless selectedFolder}}disabled{{/unless}}>
+      <i class="fas fa-save"></i> 
+      Save &amp; Activate
+    </button>
+  </footer>
+</form>

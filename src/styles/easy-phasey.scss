@@ -1,0 +1,29 @@
+// the config dialog
+#fep-config {
+  width: 500px;  
+
+  .fep-phase-button {
+    width: 16px;
+    height: 20px;
+    margin: 1px;
+  }
+
+  select#phase-list {
+    option:checked {
+      background-color: light-dark(rgb(118, 118, 118), rgb(195, 195, 195));
+    }
+
+    option:not(:checked) {
+      background-color: unset;
+    }
+  }
+
+  // active state for the skip toggle button
+  .toggle-skip-btn.active {
+    background: var(--button-hover-background-color);
+  }
+
+  #merge-tokens {
+    flex: 0;
+  }
+}

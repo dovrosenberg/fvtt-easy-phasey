@@ -1,0 +1,99 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 2022,
+        "project": ["./tsconfig.json"],
+        "extraFileExtensions": []
+    },
+    "plugins": [
+    ],
+    "rules": {
+        "indent": [
+            "warn",
+            2,
+            { "SwitchCase": 1}
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "warn",
+            "single"
+        ],
+        "semi": [
+            "warn",
+            "always"
+        ],
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-floating-promises": "error",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": [1, 
+            { 
+                "args": "after-used",
+                "argsIgnorePattern": "^_"
+            }
+        ],
+        "no-debugger": "warn",
+        "no-unused-expressions": "warn",
+        "no-undef": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-namespace": "off",
+        "@typescript-eslint/member-delimiter-style": "warn",
+        "vue/script-indent": ["warn", 2, {
+            "baseIndent": 1,
+            "switchCase": 1,
+            "ignores": []
+        }],
+        "vue/first-attribute-linebreak": ["warn", {
+            "singleline": "beside",
+            "multiline": "below"
+        }],
+        "vue/max-attributes-per-line": ["error", {
+            "singleline": 3,
+            "multiline": 1
+        }],
+        "vue/html-self-closing": ["error", {
+            "html": {
+                "void": "never",
+                "normal": "any",
+                "component": "always"
+            },
+            "svg": "always",
+            "math": "always"
+        }],
+        "vue/html-indent": ["error", 2, {
+            "attribute": 1,
+            "baseIndent": 1,
+            "closeBracket": 0,
+            "alignAttributesVertically": false,
+            "ignores": []
+        }],
+        "vue/v-on-event-hyphenation": ["warn", "always", {
+            "autofix": true,
+            "ignore": []
+        }],
+        "vue/attribute-hyphenation": ["warn", "always", {
+            "ignore": []
+        }]    
+    },
+    "overrides": [
+    {
+      "files": ["*.vue"],
+      "rules": {
+        "indent": "off"
+      }
+    }
+  ]
+}

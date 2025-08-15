@@ -1,0 +1,40 @@
+{
+  "id": "easy-phasey",
+  "title": "Easy Phasey",
+  "description": "Foundry VTT v13 module to manage phased maps by swapping scene display data while preserving tokens and fog.",
+
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13.347"
+  },
+
+  "esmodules": [
+    "scripts/index.js"
+  ],
+  "styles": [
+    "styles/easy-phasey.css"
+  ],
+
+  "authors": [{ 
+    "name": "Dov Rosenberg",
+    "url": "https://github.com/dovrosenberg"
+  }],
+
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+
+  "version": "#{VERSION}#",
+  "url": "https://github.com/dovrosenberg/fvtt-easy-phasey",
+  "manifest": "https://github.com/dovrosenberg/fvtt-easy-phasey/releases/latest/download/module.json",
+  "download": "#{DOWNLOAD}#",
+
+  "license": "https://github.com/dovrosenberg/fvtt-easy-phasey/blob/master/LICENSE.md",
+  "readme": "https://github.com/dovrosenberg/fvtt-easy-phasey/blob/master/README.md",
+  "bugs": "https://github.com/dovrosenberg/fvtt-easy-phasey/issues",
+  "changelog": "https://github.com/dovrosenberg/fvtt-easy-phasey/blob/master/CHANGELOG.md"
+}

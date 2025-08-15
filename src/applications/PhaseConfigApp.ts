@@ -1,5 +1,6 @@
 import { moduleId } from '@/settings';
 import { PhaseFolder, PhaseManager } from '@/classes';
+import { localize } from '@/utils/game';
 
 type SelectOption = {
   id: string;
@@ -35,7 +36,7 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
 
   static DEFAULT_OPTIONS: foundry.applications.api.ApplicationV2.Configuration = {
     id: 'fep-config',
-    title: 'Easy Phasey Configuration',
+    title: localize('windowTitle'),
     tag: 'form',
     width: 500,
     height: 'auto',
@@ -45,7 +46,7 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     window: { 
       frame: true,
       icon: false,
-      title: 'Easy Phasey - Configure phases',
+      title: localize('windowTitle'),
       resizable: false,
       minimizable: false, 
     },
@@ -188,7 +189,7 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
 
     const newIndex = Math.max(0, Math.min(sceneIds.length - 1, idx + delta));
 
-    // remove from current posisiont
+    // remove from current position
     const [it] = sceneIds.splice(idx, 1);
 
     // insert at new position

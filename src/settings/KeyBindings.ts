@@ -1,7 +1,9 @@
 import { moduleId } from '@/settings';
+import { PhaseManager } from '@/classes';
 
 export enum KeyBindingKeys {
-  // historyBack = 'historyBack',   // move back in tab history
+  nextPhase = 'nextPhase',
+  prevPhase = 'prevPhase',
 }
 
 export class KeyBindings {
@@ -10,27 +12,40 @@ export class KeyBindings {
       return;
 
     const keybindings = [
-      // {
-      //   bindingId: KeyBindingKeys.historyBack,
-      //   name: 'fcb.settings.keybindings.historyBack',  
-      //   hint: 'fcb.settings.keybindings.historyBackHelp',
-      //   onDown: async () => { 
-      //     // only trap this when the window is open
-      //     if (wbApp?.rendered) {
-      //       const store = useNavigationStore();
-      //       await store.navigateHistory(-1);
-      //     }
-      //   },
-      //   editable: [
-      //     {
-      //       key: 'ArrowLeft',
-      //       modifiers: [ 
-      //         foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.ALT,
-      //         foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.CONTROL
-      //       ]
-      //     }
-      //   ],
-      // },
+      {
+        bindingId: KeyBindingKeys.prevPhase,
+        name: 'fcb.keybindings.prevPhase',  
+        hint: 'fcb.keybindings.prevPhaseHelp',
+        onDown: async () => { 
+          await PhaseManager.advancePhase(-1);
+        },
+        editable: [
+          {
+            key: '[',
+            modifiers: [ 
+              foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.SHIFT,
+              foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.CONTROL
+            ]
+          }
+        ],
+      },
+      {
+        bindingId: KeyBindingKeys.nextPhase,
+        name: 'fcb.keybindings.nextPhase',  
+        hint: 'fcb.keybindings.nextPhaseHelp',
+        onDown: async () => { 
+          await PhaseManager.advancePhase(1);
+        },
+        editable: [
+          {
+            key: ']',
+            modifiers: [ 
+              foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.SHIFT,
+              foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.CONTROL
+            ]
+          }
+        ],
+      },
 
     ];
 

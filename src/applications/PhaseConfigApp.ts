@@ -216,7 +216,7 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
       } else {
         this.#sceneIds = [];
         this.#skippedSceneIds = [];
-        this.#mergeTokens = false;
+        this.#mergeTokens = true;
       }
     }
 

@@ -137,12 +137,22 @@ export class PhaseManager {
       await folder.save();
 
       await masterScene.activate();
+
+      // alert GM if they're looking at some other scene
+      if (masterScene.id !== game.user.viewedScene) {
+        ui.notifications?.warn('Easy Phasey: Why didn\'t the phase change? Because you\'re not looking at the active scene.');
+      }
     } else {
       if (!masterScene.active) {
         await masterScene.activate();
+
+        // alert GM if they're looking at some other scene
+        if (masterScene.id !== game.user.viewedScene) {
+          ui.notifications?.warn('Easy Phasey: Why didn\'t the phase change? Because you\'re not looking at the active scene.');
+        }
       }
 
-      await PhaseManager.swapSceneDisplay(masterScene, newScene, currentScene, folder.mergeTokens);
+      await PhaseManager.swapSceneDisplay(masterScene, newScene, folder.mergeTokens);
     }
     
     // update index
@@ -150,7 +160,7 @@ export class PhaseManager {
     await folder.save();
   }
   
-  private static async swapSceneDisplay(master: Scene, source: Scene, priorSource: Scene, mergeTokens: boolean) {
+  private static async swapSceneDisplay(master: Scene, source: Scene, mergeTokens: boolean) {
     // Update display-only fields
     const update: Partial<Scene> = {};
   
@@ -161,15 +171,11 @@ export class PhaseManager {
 
     // need to add in the tokens
     if (mergeTokens) {
-      update.tokens = source.tokens;
-      // const tokenCollection = priorSource.getEmbeddedCollection('Token');
-      // debugger;
-      // update.tokens = [...source.tokens, ...priorSource.tokens];
+      await master.createEmbeddedDocuments('Token', source.getEmbeddedCollection('Token').contents);
     } else {
-      update.tokens = source.tokens;
+      // if we're not merging, we don't need to change the tokens at all
     }
 
-  
     await master.update(update);
   
     // TODO Minimize flicker: for walls specifically, create before delete handled in replaceEmbedded

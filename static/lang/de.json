@@ -1,4 +1,33 @@
 {
   "fep": {
+    "windowTitle": "Easy Phasey - Phasen konfigurieren",
+    "notifications": {
+      "noValidScenes": "Easy Phasey: Keine weiteren gültigen Szenen gefunden.",
+      "masterSceneNotActive": "Easy Phasey: Warum hat sich die Phase nicht geändert? Weil Sie die aktive Szene nicht betrachten.",
+      "noValidFolder": "Bevor Sie eine phasenbasierte Karte konfigurieren, müssen Sie mindestens einen Ordner mit einer Szene darin haben."
+    },
+    "labels": {
+      "skipped": "übersprungen",
+      "mergeTokens": "Tokens zusammenführen",
+      "save": "Speichern",
+      "saveActivate": "Speichern und aktivieren",
+      "phaseScenes": "Phasenszenen",
+      "chooseFolder": "Ordner wählen",
+      "phaseFolder": "Phasenordner",
+      "masterScene": "Hauptszene"
+    },
+    "controls": {
+      "nextPhase": "Nächste Phase",
+      "prevPhase": "Vorherige Phase"
+    },
+    "tooltips": {
+      "mergeTokens": "Führen Sie alle Tokens aus der neuen Phase mit denjenigen aus der vorherigen zusammen. Wenn deaktiviert, werden alle vorhandenen Tokens in den Szenen entfernt und nur Tokens aus der vorherigen Phase erscheinen."
+    },
+    "keybindings": {
+      "prevPhase": "Vorherige Phase",
+      "prevPhaseHelp": "Zur vorherigen Phase in der Reihenfolge wechseln (wird umschlagen)",
+      "nextPhase": "Nächste Phase",
+      "nextPhaseHelp": "Zur nächsten Phase in der Reihenfolge wechseln (wird umschlagen)"
+    }
   }
 }

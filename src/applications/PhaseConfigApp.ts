@@ -34,27 +34,29 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     },
   } as const;
 
-  static DEFAULT_OPTIONS: foundry.applications.api.ApplicationV2.Configuration = {
-    id: 'fep-config',
-    title: localize('windowTitle'),
-    tag: 'form',
-    width: 500,
-    height: 'auto',
-    resizable: true,
-    position: { left: 100, top: 100 },
-    classes: [],
-    window: { 
-      frame: true,
-      icon: false,
+  static get DEFAULT_OPTIONS(): foundry.applications.api.ApplicationV2.Configuration {
+    return {
+      id: 'fep-config',
       title: localize('windowTitle'),
-      resizable: false,
-      minimizable: false, 
-    },
-    form: {
-      closeOnSubmit: true,
-      submitOnChange: false,
-    },
-  };
+      tag: 'form',
+      width: 500,
+      height: 'auto',
+      resizable: true,
+      position: { left: 100, top: 100 },
+      classes: [],
+      window: { 
+        frame: true,
+        icon: false,
+        title: localize('windowTitle'),
+        resizable: false,
+        minimizable: false, 
+      },
+      form: {
+        closeOnSubmit: true,
+        submitOnChange: false,
+      },
+    };
+  }
 
   private get selectedSceneIndex(): number {
     if (!this.#selectedSceneId) 

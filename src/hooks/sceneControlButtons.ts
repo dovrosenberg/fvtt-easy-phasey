@@ -1,15 +1,17 @@
 import { moduleId } from '@/settings';
 import { PhaseManager } from '@/classes';
+import { localize } from '@/utils/game';
 import { PhaseConfigApp } from '@/applications/PhaseConfigApp';
-import { localize } from '@/localize';
+
 
 const CONTROL_NAME = 'easy-phasey';
+
 
 export function registerForSceneControlButtons() {
   Hooks.on('getSceneControlButtons', getSceneControlButtons);
 }
 
-async function getSceneControlButtons(controls: Record<string, foundry.applications.ui.SceneControls.Control>) {
+function getSceneControlButtons(controls: Record<string, foundry.applications.ui.SceneControls.Control>) {
   // Insert our control at the end 
   let lastOrder = -1;
   for (const c of Object.values(controls)) {

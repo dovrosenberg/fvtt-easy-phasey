@@ -1,6 +1,6 @@
-import { ModuleSettings, SettingKey } from "@/settings";
-import { PhaseFolder } from "./PhaseFolder";
-import { localize } from "@/localize";
+import { ModuleSettings, SettingKey } from '@/settings';
+import { PhaseFolder } from './PhaseFolder';
+import { localize } from '@/utils/game';
 
 // these are properties to copy
 const SCENE_DATA = [

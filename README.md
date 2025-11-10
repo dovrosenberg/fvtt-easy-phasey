@@ -1,7 +1,7 @@
 # fvtt-easy-phasey
 Foundry VTT module to support phased maps
 
-[![Supported Foundry Versions](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https://github.com/dovrosenberg/fvtt-easy-phasey/raw/main/module.json)](https://github.com/dovrosenberg/fvtt-easy-phasey)
+[![Supported Foundry Versions](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https://github.com/dovrosenberg/fvtt-easy-phasey/raw/main/static/module.json)](https://github.com/dovrosenberg/fvtt-easy-phasey)
 
 Easy Phasey allows you to quickly setup phased maps in Foundry - maps that change over the course of the battle.  Why not just use different scenes?  Because switching scenes requires you to then reset a bunch of other things like tokens, fog of war, etc.  This module handles all that for you.
 

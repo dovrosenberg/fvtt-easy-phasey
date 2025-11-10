@@ -22,6 +22,32 @@ Why phased maps?  If you're reading this you probably already know, but there ar
 - Track the chosen phases/order as well as the current phase you're in for each folder (i.e. you can have multiple phased scenes in various parts of their progression at once)
 - Choose to ignore stray tokens in the phases as you progress or to merge them in --- this lets you use phases to automatically add additional actors when they come up
 
+## Usage
+Create a scene folder with the set of scenes you want to transition between.
+
+After installing the module, you should see in your left controls the easy phasey control:
+
+<img width="259" height="73" alt="Image" src="https://github.com/user-attachments/assets/ea0b21be-fd94-414e-8892-a3d94b20efe2" />
+
+Then click the config button:
+
+<img width="54" height="54" alt="Image" src="https://github.com/user-attachments/assets/46c78f1d-3d66-408e-b4c8-0a329cad459a" />
+
+And you should get the folder selector box:
+
+<img width="569" height="192" alt="Image" src="https://github.com/user-attachments/assets/c0723937-49da-4a3b-98a4-87d04345afff" />
+
+Pick the folder with your scenes in it and then configure the order:
+
+<img width="567" height="358" alt="Image" src="https://github.com/user-attachments/assets/1f0eaa45-8d81-4cdc-a5f2-9a795ce15066" />
+
+When you hit "save and activate" it should immediately activate the 1st scene, and the easy phasey menu controls should change to the back/forward buttons:
+
+<img width="48" height="146" alt="Image" src="https://github.com/user-attachments/assets/3775c8e6-e433-4bcf-9f2b-b41fe8a44dce" />
+
+Just use those buttons to move between scenes.
+
+By default, all tokens stay in the same place they were when moving between scenes.  If the "merge tokens" button is checked, then any tokens saved on the scene you are moving to are retained, resulting in both the tokens from the prior scene and the new one being present.  This is helpful, for example, if you want to pre-place some NPCs/enemies in one of the transitions and have them appear automatically.
 
 ## Issues?
 

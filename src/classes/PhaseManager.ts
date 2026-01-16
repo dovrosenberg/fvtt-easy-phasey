@@ -54,6 +54,15 @@ export class PhaseManager {
     // we can't use fromId because this can't be async, so 
     //    we do it all manually
     const folder = game.folders?.get(folderId);
+    if (!folder) {
+      if (game.ready) {
+        // clear this up for later
+        void ModuleSettings.set(SettingKey.selectedFolderId, null);
+      }
+
+      return false;
+    }
+
     const phaseFolder = new PhaseFolder(folder);
     if (!folder || !phaseFolder || !phaseFolder.masterSceneId) 
       return false;

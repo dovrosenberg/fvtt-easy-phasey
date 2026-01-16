@@ -1,6 +1,6 @@
 {
   "name": "fvtt-easy-phasey",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Foundry VTT v13 module to manage phased maps.",
   "repository": {

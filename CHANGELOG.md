@@ -1,5 +1,12 @@
 # Change Log
 
+## v1.0.2 - Initial Release
+
+![](https://img.shields.io/badge/release%20date-January%2017%2C%202026-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/dovrosenberg/fvtt-campaign-builder/v1.0.2/module.zip)
+
+- Tiles now remain with their original scene and appear/disappear as scenes are transitioned.
+
 ## v1.0.1 - Initial Release
 
 ![](https://img.shields.io/badge/release%20date-January%2015%2C%202026-blue)

@@ -172,11 +172,14 @@ export class PhaseManager {
   
   private static async swapSceneDisplay(master: Scene, source: Scene, mergeTokens: boolean) {
     // Update display-only fields
-    const update: Partial<Scene> = {};
+    const update: Partial<Scene> & { tiles: Partial<Tile>[] } = {};
   
     for (const field of SCENE_DATA) {
-      if (field in source) 
-        update[field] = source[field];
+      if (field in source) {
+        // For embedded collections (notes, regions, tiles, etc.) we don't want to copy them
+        if (!source[field] || !source[field].documentName)
+          update[field] = source[field];
+      }
     }
 
     // need to add in the tokens
@@ -185,6 +188,15 @@ export class PhaseManager {
     } else {
       // if we're not merging, we don't need to change the tokens at all
     }
+
+    // need to switch to any new tiles (they essentially work like backgorund)
+    const oldTiles = master.tiles.contents.map(tile => tile.id);
+    // await master.deleteEmbeddedDocuments('Tile', oldTiles);
+    // await master.createEmbeddedDocuments('Tile', source.getEmbeddedCollection('Tile').contents);
+    // can't erase tiles with an update
+    await master.deleteEmbeddedDocuments('Tile', oldTiles);
+
+    update.tiles = source.tiles.contents.map(tile=>tile.toObject());
 
     await master.update(update);
   

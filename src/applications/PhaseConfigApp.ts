@@ -10,6 +10,7 @@ type SelectOption = {
 type PhaseConfigRenderContext = {
   folders: SelectOption[];  // all scene folders
   selectedFolder: PhaseFolder | null;  // the selected folder
+  currentPhaseIndex: number;  // the currently selected phase index
   disableUp: boolean;  // whether the up button is disabled
   disableDown: boolean;  // whether the down button is disabled
   selectedSceneId: string | null;  // the selected (in the multiselect) scene id
@@ -26,6 +27,7 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
   #sceneIds: string[] = [];
   #skippedSceneIds: string[] = [];
   #mergeTokens: boolean = true;
+  #currentPhaseIndex: number = 0;
 
   static PARTS = {
     'fep-main': {
@@ -75,6 +77,7 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     return {
       folders,
       selectedFolder: this.#selectedFolder ?? null,
+      currentPhaseIndex: this.#currentPhaseIndex,
       disableUp: this.selectedSceneIndex === -1 || this.selectedSceneIndex === 0,
       disableDown: this.selectedSceneIndex === -1 || this.selectedSceneIndex === this.#sceneIds.length - 1,
       selectedSceneId: this.#selectedSceneId,
@@ -96,6 +99,11 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     const select = this.element?.querySelector('#fep-folder-select') as HTMLSelectElement | null;
     if (select) {
       select.addEventListener('change', (event: Event) => this.onChooseFolder(event));
+    }
+
+    const currentPhaseSelect = this.element?.querySelector('#current-phase-select') as HTMLSelectElement | null;
+    if (currentPhaseSelect) {
+      currentPhaseSelect.addEventListener('change', (event: Event) => this.onChooseCurrentPhase(event));
     }
 
     const list = this.element?.querySelector('#phase-list') as HTMLSelectElement | null;
@@ -143,12 +151,19 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     this.#selectedFolder.phaseSceneIds = this.#sceneIds;
     this.#selectedFolder.skippedSceneIds = this.#skippedSceneIds;
     this.#selectedFolder.mergeTokens = this.#mergeTokens;
+    this.#selectedFolder.currentPhaseIndex = this.#currentPhaseIndex;
     await this.#selectedFolder.save();
 
     ui.notifications?.info('Easy Phasey: Configuration saved.');
 
     if (activate) {
-      PhaseManager.activate(this.#selectedFolder);
+      // First activate the folder
+      await PhaseManager.activate(this.#selectedFolder);
+      
+      // Then advance to the selected phase if it's not the first one
+      if (this.#currentPhaseIndex > 0) {
+        await PhaseManager.advancePhase(this.#currentPhaseIndex);
+      }
     }
 
     this.close();
@@ -216,10 +231,12 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
         this.#sceneIds = [...(this.#selectedFolder.phaseSceneIds || [])];
         this.#skippedSceneIds = [...(this.#selectedFolder.skippedSceneIds || [])];
         this.#mergeTokens = this.#selectedFolder.mergeTokens;
+        this.#currentPhaseIndex = this.#selectedFolder.currentPhaseIndex || 0;
       } else {
         this.#sceneIds = [];
         this.#skippedSceneIds = [];
         this.#mergeTokens = true;
+        this.#currentPhaseIndex = 0;
       }
     }
 
@@ -236,5 +253,15 @@ export class PhaseConfigApp extends foundry.applications.api.HandlebarsApplicati
     }
 
     this.render(true);
+  }
+
+  private onChooseCurrentPhase(event: Event): void {
+    const select = event.currentTarget as HTMLSelectElement;
+
+    if (!select || !select.value) {
+      this.#currentPhaseIndex = 0;
+    } else {
+      this.#currentPhaseIndex = parseInt(select.value, 10);
+    }
   }
 }

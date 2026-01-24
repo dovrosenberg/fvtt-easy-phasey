@@ -14,7 +14,8 @@
       "phaseScenes": "Scènes de phase",
       "chooseFolder": "Choisir un dossier",
       "phaseFolder": "Dossier de phase",
-      "masterScene": "Scène principale"
+      "masterScene": "Scène principale",
+      "currentPhase": "Phase actuelle"
     },
     "controls": {
       "nextPhase": "Phase suivante",

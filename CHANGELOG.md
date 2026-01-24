@@ -1,8 +1,15 @@
 # Change Log
 
+## v1.1.1 - Macros
+
+![](https://img.shields.io/badge/release%20date-January%2024%2C%202026-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/dovrosenberg/fvtt-easy-phasey/v1.1.1/module.zip)
+
+- You can now use a macro to adjust the phase.  See the README.
+
 ## v1.1.0 - Set the phase
 
-![](https://img.shields.io/badge/release%20date-January%2017%2C%202026-blue)
+![](https://img.shields.io/badge/release%20date-January%2024%2C%202026-blue)
 ![GitHub release](https://img.shields.io/github/downloads-pre/dovrosenberg/fvtt-easy-phasey/v1.1.0/module.zip)
 
 - You can now set the current phase rather than always having to start at the top of the list and move through one at a time.

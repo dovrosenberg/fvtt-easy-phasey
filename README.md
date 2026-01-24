@@ -49,6 +49,22 @@ Just use those buttons to move between scenes.
 
 By default, all tokens stay in the same place they were when moving between scenes.  If the "merge tokens" button is checked, then any tokens saved on the scene you are moving to are retained, resulting in both the tokens from the prior scene and the new one being present.  This is helpful, for example, if you want to pre-place some NPCs/enemies in one of the transitions and have them appear automatically.
 
+## Other ways to change phase
+### Keyboard shortcuts
+There are keyboard shortcuts available to move between phases. By default:
+- Shift + Control + \] - move to the previous phase
+- Shift + Control + \] - move to the next phase
+
+### Macros
+You can also use the advancePhase() api call to change the phase:
+
+```javascript
+await game.modules.get('fvtt-easy-phasey')?.api?.advancePhase(1);
+```
+
+The argument is the number of steps to advance (negative to go backwards).
+
+
 ## Issues?
 
 If you believe you found a bug or would like to post a feature request, head over to the module's [Github repo](https://github.com/dovrosenberg/fvtt-easy-phasey) and [open a new issue](https://github.com/dovrosenberg/fvtt-easy-phasey/issues/new/choose).

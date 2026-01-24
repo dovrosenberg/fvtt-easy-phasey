@@ -39,7 +39,7 @@ And you should get the folder selector box:
 
 Pick the folder with your scenes in it and then configure the order:
 
-<img width="567" height="358" alt="Image" src="https://github.com/user-attachments/assets/1f0eaa45-8d81-4cdc-a5f2-9a795ce15066" />
+<img width="557" height="419" alt="image" src="https://github.com/user-attachments/assets/929cd0e0-e6a8-4744-995f-e6620d5586ab" />
 
 When you hit "save and activate" it should immediately activate the 1st scene, and the easy phasey menu controls should change to the back/forward buttons:
 

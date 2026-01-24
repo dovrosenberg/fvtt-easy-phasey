@@ -25,6 +25,19 @@
   {{#if selectedFolder}}
     <section class="fep-config-row flexrow" style="margin-bottom: 1rem">
       <div class="flexcol">
+        <label for="current-phase-select"><b>{{localize 'fep.labels.currentPhase'}}</b></label>
+        <select id="current-phase-select" name="currentPhaseIndex">
+          {{#each sceneList}}
+            <option value="{{@index}}" {{#if (eq @index ../currentPhaseIndex)}}selected{{/if}}>
+              {{this.name}}{{#if this.skipped}} ({{localize 'fep.labels.skipped' }}){{/if}}
+            </option>
+          {{/each}}
+        </select>
+      </div>
+    </section>
+
+    <section class="fep-config-row flexrow" style="margin-bottom: 1rem">
+      <div class="flexcol">
         <div class="list-header flexrow">
           <b>{{localize 'fep.labels.phaseScenes'}}</b>
         </div>

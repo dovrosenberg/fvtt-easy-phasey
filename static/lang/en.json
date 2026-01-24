@@ -14,7 +14,8 @@
       "phaseScenes": "Phase Scenes",
       "chooseFolder": "Choose a folder",
       "phaseFolder": "Phase Folder",
-      "masterScene": "Master Scene"
+      "masterScene": "Master Scene",
+      "currentPhase": "Current Phase"
     },
     "controls": {
       "nextPhase": "Next Phase",

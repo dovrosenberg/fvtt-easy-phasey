@@ -1,5 +1,13 @@
 # Change Log
 
+## v1.2 - Updated to v14
+
+![](https://img.shields.io/badge/release%20date-November%202%2C%202026-blue)
+![GitHub release](https://img.shields.io/github/downloads-pre/dovrosenberg/fvtt-easy-phasey/v1.2.0/module.zip)
+
+- Added support for Foundry v14. 
+- Removed prior non-English language files to comply with Foundry AI policy.  If you want one back, and are willing to do the translation, let me know.
+
 ## v1.1.1 - Macros
 
 ![](https://img.shields.io/badge/release%20date-January%2024%2C%202026-blue)

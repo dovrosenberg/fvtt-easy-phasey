@@ -1,7 +1,7 @@
 {
   "id": "easy-phasey",
   "title": "Easy Phasey",
-  "description": "Foundry VTT v13 module to manage phased maps by swapping scene display data while preserving tokens and fog.",
+  "description": "Foundry VTT v14 module to manage phased maps by swapping scene display data while preserving tokens and fog.",
 
   "compatibility": {
     "minimum": "13",

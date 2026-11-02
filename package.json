@@ -1,8 +1,8 @@
 {
   "name": "fvtt-easy-phasey",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "private": true,
-  "description": "Foundry VTT v13 module to manage phased maps.",
+  "description": "Foundry VTT v14 module to manage phased maps.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dovrosenberg/fvtt-easy-phasey.git"
@@ -14,10 +14,10 @@
     "build": "vite build",
     "debug": "vite build --minify=false --mode development",
     "lint": "eslint --ext .ts,.vue src",
-    "linkdata": "ln -s $PWD/dist ~/foundry13data/Data/modules/easy-phasey",
+    "linkdata": "ln -s $PWD/dist ~/foundry14data/Data/modules/easy-phasey",
     "tsc": "vue-tsc --skipLibCheck -p ./tsconfig.json",
-    "unlinkdata": "unlink ~/foundry13data/Data/modules/easy-phasey",
-    "foundry": "node ~/foundry13/resources/app/main.js --dataPath=/home/dov/foundry13data"
+    "unlinkdata": "unlink ~/foundry14data/Data/modules/easy-phasey",
+    "foundry": "node ~/foundry14/resources/app/main.js --dataPath=/home/dov/foundry14data"
   },
   "devDependencies": {
     "@originjs/vite-plugin-commonjs": "^1.0.3",

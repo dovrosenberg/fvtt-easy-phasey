@@ -6,7 +6,15 @@ const isClientGM = (): boolean => (game.user?.isGM || false);
 // localize a string
 const localize = (text: string) => game.i18n.localize(`fep.${text}`);
 
-export { 
+// major Foundry version (ex. 13, 14)
+const foundryGeneration = (): number => game.release.generation;
+
+// is Foundry v14 or later?
+const isV14 = (): boolean => foundryGeneration() >= 14;
+
+export {
   isClientGM,
   localize,
+  foundryGeneration,
+  isV14,
 };

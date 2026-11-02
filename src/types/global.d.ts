@@ -1,4 +1,4 @@
-export * from '@types/fvtt-types';
+export * from 'fvtt-types';
 
 // some global configuration for the types
 declare global {

@@ -15,7 +15,7 @@ Why phased maps?  If you're reading this you probably already know, but there ar
 
 
 ## Use of AI
-ChatGPT was used lightly to speed up the development process of the first version.  Claude is now used - primarily for staying on top of security updates for open source packages that are used.
+ChatGPT was used lightly to speed up the development process of the first version.  Claude is now used for staying on top of security updates for open source packages that are used.
 
 
 ## Current features
